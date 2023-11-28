@@ -1,11 +1,23 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
 
-// The next line is part of the sample project, you don't need it in your
-// project. It imports a Hardhat task definition, that can be used for
-// testing the frontend.
-require("./tasks/faucet");
+const { ALCHEMY_API_URL, SEPOLIA_PRIVATE_KEY } = process.env;
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity: "0.8.17",
+  solidity: "0.8.19",
+  defaultNetwork: "sepolia",
+  networks: {
+    hardhat: {},
+    sepolia: {
+      url: ALCHEMY_API_URL,
+      accounts: [SEPOLIA_PRIVATE_KEY],
+    },
+  },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: ETHERSCAN_API_KEY,
+  },
 };
