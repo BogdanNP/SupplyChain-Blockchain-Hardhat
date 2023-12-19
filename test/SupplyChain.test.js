@@ -49,7 +49,7 @@ describe("SupplyChain", function () {
         deploySupplyChainContract
       );
       const user = await supplyChain.users(owner.address);
-      expect(user.id_).to.equal(owner.address);
+      expect(user.id).to.equal(owner.address);
     });
 
     it("Should set the right role", async function () {
@@ -61,27 +61,22 @@ describe("SupplyChain", function () {
     });
   });
 
-  describe("Add Users", function () {
+  describe("Users", function () {
     it("Add Manufacturer", async function () {
       const { supplyChain } = await loadFixture(deploySupplyChainContract);
       const [_, manufacturer] = await ethers.getSigners();
       const manufacturerName = "Manufacturer Name";
       const manufacturerEmail = "manufacturer@gmail.com";
       const newManufacturer = {
-        id_: manufacturer.address,
+        id: manufacturer.address,
         name: manufacturerName,
         email: manufacturerEmail,
         role: UserRoles.Manufacturer,
       };
 
-      supplyChain.on("NewUser", async (...newUser) => {
-        const [name, email, role] = newUser;
-        expect(name).to.equal(manufacturerName);
-        expect(email).to.equal(manufacturerEmail);
-        expect(role.toNumber()).to.equal(UserRoles.Manufacturer);
-      });
-
-      await supplyChain.addParty(newManufacturer);
+      await expect(supplyChain.addUser(newManufacturer))
+        .to.emit(supplyChain, "NewUser")
+        .withArgs(manufacturerName, manufacturerEmail, UserRoles.Manufacturer);
     });
 
     it("Add Supplier", async function () {
@@ -91,7 +86,7 @@ describe("SupplyChain", function () {
       const supplierEmail = "supplier@gmail.com";
       const newSupplier = {
         role: UserRoles.Supplier,
-        id_: supplier.address,
+        id: supplier.address,
         name: supplierName,
         email: supplierEmail,
       };
@@ -103,7 +98,7 @@ describe("SupplyChain", function () {
         expect(role.toNumber()).to.equal(UserRoles.Supplier);
       });
 
-      supplyChain.addParty(newSupplier);
+      supplyChain.addUser(newSupplier);
     });
 
     it("Add Vendor", async function () {
@@ -113,7 +108,7 @@ describe("SupplyChain", function () {
       const vendorEmail = "vendor@gmail.com";
       const newVendor = {
         role: UserRoles.Vendor,
-        id_: vendor.address,
+        id: vendor.address,
         name: vendorName,
         email: vendorEmail,
       };
@@ -125,7 +120,7 @@ describe("SupplyChain", function () {
         expect(role.toNumber()).to.equal(UserRoles.Vendor);
       });
 
-      supplyChain.addParty(newVendor);
+      supplyChain.addUser(newVendor);
     });
 
     it("Not Admin Tries to Add User", async function () {
@@ -135,29 +130,29 @@ describe("SupplyChain", function () {
       const userEmail = "user@gmail.com";
       const newUser = {
         role: UserRoles.Manufacturer,
-        id_: user.address,
+        id: user.address,
         name: userName,
         email: userEmail,
       };
 
       const otherUser = {
         role: UserRoles.Manufacturer,
-        id_: otherAccount.address,
+        id: otherAccount.address,
         name: userName,
         email: userEmail,
       };
 
-      await supplyChain.connect(owner).addParty(newUser);
+      await supplyChain.connect(owner).addUser(newUser);
 
       await expect(
-        supplyChain.connect(user).addParty(otherUser)
+        supplyChain.connect(user).addUser(otherUser)
       ).to.be.revertedWith("Only admin can add other users");
     });
   });
 
-  function getManufacturer(manufacturerAddress) {
+  function getManufacturer(manufacturerId) {
     const newManufacturer = {
-      id_: manufacturerAddress,
+      id: manufacturerId,
       name: "Manufacturer Name",
       email: "manufacturer@gmail.com",
       role: UserRoles.Manufacturer,
@@ -165,9 +160,19 @@ describe("SupplyChain", function () {
     return newManufacturer;
   }
 
-  function getVendor(vendorAddress) {
+  function getSupplier(supplierId) {
+    const newSupplier = {
+      id: supplierId,
+      name: "Supplier Name",
+      email: "supplier@gmail.com",
+      role: UserRoles.Manufacturer,
+    };
+    return newSupplier;
+  }
+
+  function getVendor(vendorId) {
     const newVendor = {
-      id_: vendorAddress,
+      id: vendorId,
       name: "Vendor Name",
       email: "vendor@gmail.com",
       role: UserRoles.Vendor,
@@ -175,54 +180,86 @@ describe("SupplyChain", function () {
     return newVendor;
   }
 
-  describe("Add Products", function () {
+  describe("Products", function () {
+    it("Manufacturer adds a product type", async function () {
+      const { supplyChain } = await loadFixture(deploySupplyChainContract);
+      const [_, manufacturer] = await ethers.getSigners();
+      const newManufacturer = await getManufacturer(manufacturer.address);
+      await supplyChain.addUser(newManufacturer);
+
+      const newProductType = {
+        name: "product type",
+        id: "1",
+        details: ["1", "2"],
+      };
+
+      await expect(
+        supplyChain.connect(manufacturer).addProductType(newProductType)
+      )
+        .to.emit(supplyChain, "NewProductType")
+        .withArgs(newProductType.name, newProductType.id);
+    });
+
     it("Manufacturer adds a product", async function () {
       const { supplyChain } = await loadFixture(deploySupplyChainContract);
       const [_, manufacturer] = await ethers.getSigners();
       const newManufacturer = await getManufacturer(manufacturer.address);
-      await supplyChain.addParty(newManufacturer);
+      await supplyChain.addUser(newManufacturer);
+
+      const newProductType = {
+        id: "1",
+        name: "product type",
+        details: ["1", "2"],
+      };
+
+      await supplyChain.connect(manufacturer).addProductType(newProductType);
 
       const newProduct = {
         name: "product",
+        productType: newProductType,
         barcodeId: "1",
         manufacturerName: newManufacturer.name,
-        manufacturer: newManufacturer.id_,
+        manufacturerId: newManufacturer.id,
         manufacturingDate: 333,
         expirationDate: 444,
+        isBatch: true,
+        batchCount: 12,
         composition: ["1", "2"],
       };
 
-      supplyChain.on("NewProduct", async (...newProduct_) => {
-        const [
-          name,
-          manufacturerName,
-          barcodeId,
-          manufacturingDate,
-          expirationDate,
-        ] = newProduct_;
-        expect(name).to.equal(newProduct.name);
-        expect(manufacturerName).to.equal(newProduct.manufacturerName);
-        expect(barcodeId).to.equal(newProduct.barcodeId);
-        expect(manufacturingDate).to.equal(newProduct.manufacturingDate);
-        expect(expirationDate).to.equal(newProduct.expirationDate);
-      });
-
-      await supplyChain.connect(manufacturer).addProduct(newProduct);
+      await expect(supplyChain.connect(manufacturer).addProduct(newProduct))
+        .to.emit(supplyChain, "NewProduct")
+        .withArgs(
+          newProduct.name,
+          newProduct.manufacturerName,
+          newProduct.barcodeId,
+          newProduct.manufacturingDate,
+          newProduct.expirationDate
+        );
     });
 
     it("Not Manufacturer adds a product", async function () {
       const { supplyChain } = await loadFixture(deploySupplyChainContract);
       const [_, vendor] = await ethers.getSigners();
       const newVendor = await getVendor(vendor.address);
-      await supplyChain.addParty(newVendor);
+      await supplyChain.addUser(newVendor);
+
+      const newProductType = {
+        name: "product type",
+        id: "1",
+        details: ["1", "2"],
+      };
 
       const newProduct = {
         name: "product",
+        productType: newProductType,
         barcodeId: "1",
         manufacturerName: newVendor.name,
-        manufacturer: newVendor.id_,
+        manufacturerId: newVendor.id,
         manufacturingDate: 333,
         expirationDate: 444,
+        isBatch: true,
+        batchCount: 12,
         composition: ["1", "2"],
       };
 
@@ -230,5 +267,225 @@ describe("SupplyChain", function () {
         supplyChain.connect(vendor).addProduct(newProduct)
       ).to.be.revertedWith("Manufacturer role required");
     });
+
+    it("Manufacturer creates a sell request for a product, supplier accepts", async function () {
+      const { supplyChain } = await loadFixture(deploySupplyChainContract);
+      const [_, manufacturer, supplier] = await ethers.getSigners();
+      const newManufacturer = getManufacturer(manufacturer.address);
+      const newSupplier = getSupplier(supplier.address);
+      await supplyChain.addUser(newManufacturer);
+      await supplyChain.addUser(newSupplier);
+      const newProductType = {
+        name: "product type",
+        id: "1",
+        details: ["1", "2"],
+      };
+
+      await supplyChain.connect(manufacturer).addProductType(newProductType);
+
+      const newProduct = {
+        name: "product",
+        productType: newProductType,
+        barcodeId: "1",
+        manufacturerName: newManufacturer.name,
+        manufacturerId: newManufacturer.id,
+        manufacturingDate: 333,
+        expirationDate: 444,
+        isBatch: true,
+        batchCount: 12,
+        composition: ["1", "2"],
+      };
+
+      await expect(supplyChain.connect(manufacturer).addProduct(newProduct))
+        .to.emit(supplyChain, "NewProduct")
+        .withArgs(
+          newProduct.name,
+          newProduct.manufacturerName,
+          newProduct.barcodeId,
+          newProduct.manufacturingDate,
+          newProduct.expirationDate
+        );
+
+      await expect(
+        supplyChain
+          .connect(manufacturer)
+          .createSellRequest(supplier.address, "1", 1)
+      )
+        .to.emit(supplyChain, "ProductOwnershipTransferRequest")
+        .withArgs(
+          newProduct.name,
+          newProduct.manufacturerName,
+          newProduct.barcodeId,
+          newSupplier.name,
+          newSupplier.email,
+          newManufacturer.name,
+          newManufacturer.email,
+          1
+        );
+
+      await expect(
+        supplyChain
+          .connect(supplier)
+          .acceptSellRequest(manufacturer.address, "1", 1, true)
+      )
+        .to.emit(supplyChain, "ProductOwnershipTransferResponse")
+        .withArgs(
+          newProduct.name,
+          newProduct.manufacturerName,
+          newProduct.barcodeId,
+          newSupplier.name,
+          newSupplier.email,
+          newManufacturer.name,
+          newManufacturer.email,
+          1,
+          "ACCEPTED"
+        );
+    });
+
+    it("Manufacturer creates a sell request for a product, supplier rejects", async function () {
+      const { supplyChain } = await loadFixture(deploySupplyChainContract);
+      const [_, manufacturer, supplier] = await ethers.getSigners();
+      const newManufacturer = getManufacturer(manufacturer.address);
+      const newSupplier = getSupplier(supplier.address);
+      await supplyChain.addUser(newManufacturer);
+      await supplyChain.addUser(newSupplier);
+      const newProductType = {
+        name: "product type",
+        id: "1",
+        details: ["1", "2"],
+      };
+
+      await supplyChain.connect(manufacturer).addProductType(newProductType);
+
+      const newProduct = {
+        name: "product",
+        productType: newProductType,
+        barcodeId: "1",
+        manufacturerName: newManufacturer.name,
+        manufacturerId: newManufacturer.id,
+        manufacturingDate: 333,
+        expirationDate: 444,
+        isBatch: true,
+        batchCount: 12,
+        composition: ["1", "2"],
+      };
+
+      await expect(supplyChain.connect(manufacturer).addProduct(newProduct))
+        .to.emit(supplyChain, "NewProduct")
+        .withArgs(
+          newProduct.name,
+          newProduct.manufacturerName,
+          newProduct.barcodeId,
+          newProduct.manufacturingDate,
+          newProduct.expirationDate
+        );
+
+      await expect(
+        supplyChain
+          .connect(manufacturer)
+          .createSellRequest(supplier.address, "1", 1)
+      )
+        .to.emit(supplyChain, "ProductOwnershipTransferRequest")
+        .withArgs(
+          newProduct.name,
+          newProduct.manufacturerName,
+          newProduct.barcodeId,
+          newSupplier.name,
+          newSupplier.email,
+          newManufacturer.name,
+          newManufacturer.email,
+          1
+        );
+
+      await expect(
+        supplyChain
+          .connect(supplier)
+          .acceptSellRequest(manufacturer.address, "1", 1, false)
+      )
+        .to.emit(supplyChain, "ProductOwnershipTransferResponse")
+        .withArgs(
+          newProduct.name,
+          newProduct.manufacturerName,
+          newProduct.barcodeId,
+          newSupplier.name,
+          newSupplier.email,
+          newManufacturer.name,
+          newManufacturer.email,
+          1,
+          "REJECTED"
+        );
+    });
   });
 });
+
+// Maybe will be useful:
+
+// supplyChain.on("NewUser", async (...newUser) => {
+//   const [name, email, role] = newUser;
+//   expect(name).to.equal(manufacturerName);
+//   expect(email).to.equal(manufacturerEmail);
+//   expect(role.toNumber()).to.equal(UserRoles.Manufacturer);
+// });
+
+// supplyChain.on("NewProductType", async (...newProductType_) => {
+//   const [name, id] = newProductType_;
+//   expect(name).to.equal(newProductType.name);
+//   expect(id).to.equal(newProductType.id);
+// });
+
+// supplyChain.on("NewProduct", async (...newProduct_) => {
+//   const [
+//     name,
+//     manufacturerName,
+//     barcodeId,
+//     manufacturingDate,
+//     expirationDate,
+//   ] = newProduct_;
+//   expect(name).to.equal(newProductType.name);
+//   expect(manufacturerName).to.equal(newProductType.manufacturerName);
+//   expect(barcodeId).to.equal(newProduct.barcodeId);
+//   expect(manufacturingDate).to.equal(newProduct.manufacturingDate);
+//   expect(expirationDate).to.equal(newProduct.expirationDate);
+// });
+
+// supplyChain.on(
+//   "ProductOwnershipTransferRequest",
+//   async (...ownershipTransfer_) => {
+//     const [
+//       name,
+//       manufacturerName,
+//       barcodeId,
+//       buyerName,
+//       buyerEmail,
+//       transferTime,
+//     ] = ownershipTransfer_;
+//     expect(name).to.equal(newProduct.name);
+//     expect(manufacturerName).to.equal(newProduct.manufacturerName);
+//     expect(barcodeId).to.equal(newProduct.barcodeId);
+//     expect(buyerName).to.equal(newSupplier.name);
+//     expect(buyerEmail).to.equal(newSupplier.email);
+//     expect(transferTime).to.equal(1);
+//   }
+// );
+
+// supplyChain.on(
+//   "ProductOwnershipTransferResponse",
+//   async (...ownershipTransfer_) => {
+//     const [
+//       name,
+//       manufacturerName,
+//       barcodeId,
+//       buyerName,
+//       buyerEmail,
+//       transferTime,
+//       status,
+//     ] = ownershipTransfer_;
+//     expect(name).to.equal(newProduct.name);
+//     expect(manufacturerName).to.equal(newProduct.manufacturerName);
+//     expect(barcodeId).to.equal(newProduct.barcodeId);
+//     expect(buyerName).to.equal(newSupplier.name);
+//     expect(buyerEmail).to.equal(newSupplier.email);
+//     expect(transferTime).to.equal(1);
+//     expect(status).to.equal("ACCEPTED");
+//   }
+// );

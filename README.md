@@ -57,7 +57,7 @@ npx hardhat test tests/SupplyChain.test.js --network hardhat
 To deploy the contracts:
 
 ```shell
-npx hardhat run scripts/deploy_supply_chaib.js --network sepolia
+npx hardhat run scripts/deploy_supply_chain.js --network sepolia
 ```
 
 Useful commands:

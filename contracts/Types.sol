@@ -13,18 +13,41 @@ library Types {
 
     struct UserDetails {
         UserRole role;
-        address id_;
+        address id;
         string name;
         string email;
     }
 
-    struct Product{
+    struct ProductType {
+        string id;
         string name;
+        string[] details;
+    }
+
+    // barcode
+    // EAN-13:
+    // 2 number system // region
+    // 5 manufacturer code // ~100k manufacurers
+    // 5 product code // ~100k products/manufacturer
+    //      * link manufacturer => productCodeCounter
+    // 1 check digit
+
+    struct Product {
+        string name;
+        ProductType productType;
         string barcodeId;
         string manufacturerName;
-        address manufacturer;
+        address manufacturerId;
         uint256 manufacturingDate;
         uint256 expirationDate;
-        string [] composition;
+        bool isBatch;
+        uint256 batchCount;
+        string[] composition;
+    }
+
+    struct Recepie {
+        mapping(string => uint256) productQuantities; // product type id => quantity in kg
+        ProductType result;
+        uint256 quantityResult;
     }
 }
