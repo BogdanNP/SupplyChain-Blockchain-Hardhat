@@ -7,19 +7,21 @@ import "hardhat/console.sol";
 import "./Types.sol";
 
 contract Users {
+    int256 public usersCount;
     mapping(address => Types.UserDetails) public users;
     mapping(address => Types.UserDetails[]) internal manufacturersList;
     mapping(address => Types.UserDetails[]) internal suppliersList;
     mapping(address => Types.UserDetails[]) internal vendorsList;
     mapping(address => Types.UserDetails[]) internal customersList;
 
-    event NewUser(string name, string email, Types.UserRole role);
+    event NewUser(address id, string name, string email, Types.UserRole role);
 
     function add(Types.UserDetails memory user) internal {
         require(user.id != address(0));
         require(!has(user.role, user.id), "Same user with same role exists");
+        usersCount++;
         users[user.id] = user;
-        emit NewUser(user.name, user.email, user.role);
+        emit NewUser(user.id, user.name, user.email, user.role);
     }
 
     function has(
