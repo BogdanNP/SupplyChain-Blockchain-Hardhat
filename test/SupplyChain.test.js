@@ -528,9 +528,9 @@ describe("SupplyChain", function () {
 
       console.log(userLinkedProduct2, userLinkedProduct1, userLinkedProduct0);
 
-      const product0 = await supplyChain.products(0);
-      const product1 = await supplyChain.products(1);
-      const product2 = await supplyChain.products(2);
+      const product0 = await supplyChain.products("1");
+      const product1 = await supplyChain.products("2");
+      const product2 = await supplyChain.products("3");
       console.log(product0);
       console.log(product1);
       console.log(product2);

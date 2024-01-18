@@ -25,14 +25,18 @@ Project Structure:
 
 Contracts:
 
-- `Users`
-- `Products`
-- `ObjectTransfers`
+- `Users` + `UsersInterface`
+- `Products` + `ProductsInterface` // TBD
+- `ProductTransfers` + `ProductTransfersInterface` // TBD + TBT
+- fix tests
+- deploy
+- implement FE
 
 TODO:
 
-- add product (M)
-- send product to other user (V)
+- change logic to use interfaces, not inheritance
+- update product transfer logic + test it // use the new ObjectTransfer contract
+-
 
 System Requirements:
 
