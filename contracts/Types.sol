@@ -46,8 +46,14 @@ library Types {
     }
 
     struct Recepie {
-        mapping(string => uint256) productQuantities; // product type id => quantity in kg
+        ProductQuantity[] productQuantities; // product type id => quantity in kg
         ProductType result;
         uint256 quantityResult;
+        string[] composition;
+    }
+
+    struct ProductQuantity {
+        ProductType productType;
+        uint256 quantity;
     }
 }

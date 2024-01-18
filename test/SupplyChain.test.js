@@ -76,7 +76,12 @@ describe("SupplyChain", function () {
 
       await expect(supplyChain.addUser(newManufacturer))
         .to.emit(supplyChain, "NewUser")
-        .withArgs(manufacturerName, manufacturerEmail, UserRoles.Manufacturer);
+        .withArgs(
+          manufacturer.address,
+          manufacturerName,
+          manufacturerEmail,
+          UserRoles.Manufacturer
+        );
     });
 
     it("Add Supplier", async function () {
@@ -414,6 +419,101 @@ describe("SupplyChain", function () {
           1,
           "REJECTED"
         );
+    });
+
+    it("Manufacturer creates a product", async function () {
+      const { supplyChain } = await loadFixture(deploySupplyChainContract);
+      const [_, manufacturer] = await ethers.getSigners();
+      const newManufacturer = getManufacturer(manufacturer.address);
+      await supplyChain.addUser(newManufacturer);
+
+      const newProductType1 = {
+        id: "1",
+        name: "product type",
+        details: ["1", "2"],
+      };
+      const newProductType2 = {
+        id: "2",
+        name: "product type 2",
+        details: ["3", "4"],
+      };
+
+      const newProductType3 = {
+        id: "3",
+        name: "product type 3",
+        details: ["5", "6"],
+      };
+
+      await supplyChain.connect(manufacturer).addProductType(newProductType1);
+      await supplyChain.connect(manufacturer).addProductType(newProductType2);
+      await supplyChain.connect(manufacturer).addProductType(newProductType3);
+
+      const newProduct1 = {
+        name: "product 1",
+        productType: newProductType1,
+        barcodeId: "1",
+        manufacturerName: newManufacturer.name,
+        manufacturerId: newManufacturer.id,
+        manufacturingDate: 333,
+        expirationDate: 444,
+        isBatch: true,
+        batchCount: 12,
+        composition: ["1", "2"],
+      };
+
+      const newProduct2 = {
+        name: "product 2",
+        productType: newProductType2,
+        barcodeId: "2",
+        manufacturerName: newManufacturer.name,
+        manufacturerId: newManufacturer.id,
+        manufacturingDate: 333,
+        expirationDate: 444,
+        isBatch: true,
+        batchCount: 12,
+        composition: ["1", "2"],
+      };
+
+      supplyChain.connect(manufacturer).addProduct(newProduct1);
+      supplyChain.connect(manufacturer).addProduct(newProduct2);
+
+      const productQuantity1 = {
+        productType: newProductType1,
+        quantity: 5,
+      };
+
+      const productQuantity2 = {
+        productType: newProductType2,
+        quantity: 5,
+      };
+
+      const recepie = {
+        productQuantities: [productQuantity1, productQuantity2],
+        result: newProductType3,
+        quantityResult: 5,
+        composition: ["12", "13"],
+      };
+
+      await expect(
+        supplyChain
+          .connect(manufacturer)
+          .createProduct(recepie, "Test Create Product")
+      )
+        .to.emit(supplyChain, "NewProduct")
+        .withArgs(
+          "Test Create Product",
+          newManufacturer.name,
+          "2",
+          parseInt(Date.now() / 100000) * 100,
+          parseInt(Date.now() / 100000) * 100 + 86400
+        );
+
+      const userLinkedProducts = await supplyChain.userLinkedProducts(
+        manufacturer.address,
+        2
+      );
+
+      console.log(userLinkedProducts);
     });
   });
 });

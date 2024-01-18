@@ -42,24 +42,32 @@ contract SupplyChain is Users, Products {
     //     _sellProduct(buyerId_, barcodeId_, user, currentTime_);
     // }
 
-    function createSellRequest(
-        address buyerId_,
-        string memory barcodeId_,
-        uint256 currentTime_
-    ) public {
-        Types.UserDetails memory buyer = users[buyerId_];
-        Types.UserDetails memory seller = users[msg.sender];
-        _createSellRequest(barcodeId_, buyer, seller, currentTime_);
-    }
+    // function createSellRequest(
+    //     address buyerId_,
+    //     string memory barcodeId_,
+    //     uint256 currentTime_
+    // ) public {
+    //     Types.UserDetails memory buyer = users[buyerId_];
+    //     Types.UserDetails memory seller = users[msg.sender];
+    //     _createSellRequest(barcodeId_, buyer, seller, currentTime_);
+    // }
 
-    function acceptSellRequest(
-        address sellerId_,
-        string memory barcodeId_,
-        uint256 currentTime_,
-        bool acceptSell
-    ) public {
-        Types.UserDetails memory buyer = users[msg.sender];
-        Types.UserDetails memory seller = users[sellerId_];
-        _acceptSellRequest(barcodeId_, buyer, seller, currentTime_, acceptSell);
+    // function acceptSellRequest(
+    //     address sellerId_,
+    //     string memory barcodeId_,
+    //     uint256 currentTime_,
+    //     bool acceptSell
+    // ) public {
+    //     Types.UserDetails memory buyer = users[msg.sender];
+    //     Types.UserDetails memory seller = users[sellerId_];
+    //     _acceptSellRequest(barcodeId_, buyer, seller, currentTime_, acceptSell);
+    // }
+
+    function createProduct(
+        Types.Recepie memory recepie_,
+        string memory productName
+    ) public onlyManufacturer {
+        Types.UserDetails memory user = users[msg.sender];
+        _createProduct(recepie_, productName, user);
     }
 }

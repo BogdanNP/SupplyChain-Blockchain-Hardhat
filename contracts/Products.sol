@@ -9,8 +9,9 @@ import "./Types.sol";
 contract Products {
     mapping(string => Types.ProductType) internal productTypes; // product type id => product type
     mapping(string => Types.Product) internal products; // barcodeId => product
-    mapping(address => string[]) internal userLinkedProducts; // address => list of product barcodeIds
-    mapping(address => uint256) internal productCounter;
+    mapping(address => string[]) public userLinkedProducts; // address => list of product barcodeIds
+    mapping(address => uint256) public productCounter;
+    mapping(address => uint256) public productTypeCounter;
     mapping(address => mapping(string => Types.Product))
         internal waitingProducts;
     // Events
@@ -68,6 +69,57 @@ contract Products {
         products[product_.barcodeId] = product_;
         productCounter[msg.sender]++;
         userLinkedProducts[msg.sender].push(product_.barcodeId);
+
+        emit NewProduct(
+            product_.name,
+            product_.manufacturerName,
+            product_.barcodeId,
+            product_.manufacturingDate,
+            product_.expirationDate
+        );
+    }
+
+    function _createProduct(
+        Types.Recepie memory recepie_,
+        string memory productName,
+        Types.UserDetails memory user
+    ) internal {
+        for (uint i = 0; i < recepie_.productQuantities.length; ++i) {
+            recepie_.productQuantities[i];
+            for (uint j = 0; j < userLinkedProducts[user.id].length; ++j) {
+                if (
+                    compareStrings(
+                        recepie_.productQuantities[i].productType.id,
+                        products[userLinkedProducts[user.id][j]].productType.id
+                    )
+                ) {
+                    require(
+                        recepie_.productQuantities[i].quantity <=
+                            products[userLinkedProducts[user.id][j]].batchCount,
+                        "Too few products with product type"
+                    );
+                }
+            }
+        }
+
+        Types.Product memory product_ = Types.Product(
+            productName,
+            recepie_.result,
+            toString(productCounter[user.id]), //TODO: generate barcode id
+            user.name,
+            user.id,
+            (block.timestamp / 100) * 100,
+            (block.timestamp / 100) * 100 + 86400, //TODO: 86400=1day in timestamp
+            true,
+            recepie_.quantityResult,
+            recepie_.composition
+        );
+        products[product_.barcodeId] = product_;
+        productCounter[msg.sender]++;
+        userLinkedProducts[msg.sender].push(product_.barcodeId);
+
+        // delete used products
+        // decrease quantities
 
         emit NewProduct(
             product_.name,
@@ -199,5 +251,29 @@ contract Products {
     ) internal pure returns (bool) {
         return (keccak256(abi.encodePacked((a))) ==
             keccak256(abi.encodePacked((b))));
+    }
+
+    function toString(uint256 value) internal pure returns (string memory) {
+        if (value == 0) {
+            return "0";
+        }
+
+        uint256 temp = value;
+        uint256 digits;
+
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+
+        bytes memory buffer = new bytes(digits);
+
+        while (value != 0) {
+            digits--;
+            buffer[digits] = bytes1(uint8(48 + (value % 10)));
+            value /= 10;
+        }
+
+        return string(buffer);
     }
 }
