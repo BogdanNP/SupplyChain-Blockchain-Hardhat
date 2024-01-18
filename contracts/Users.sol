@@ -7,6 +7,16 @@ import "hardhat/console.sol";
 import "./Types.sol";
 
 contract Users {
+    constructor(string memory name_, string memory email_) {
+        Types.UserDetails memory admin_ = Types.UserDetails({
+            role: Types.UserRole.Admin,
+            id: msg.sender,
+            name: name_,
+            email: email_
+        });
+        add(admin_);
+    }
+
     int256 public usersCount;
     mapping(address => Types.UserDetails) public users;
     mapping(address => Types.UserDetails[]) internal manufacturersList;
@@ -32,10 +42,7 @@ contract Users {
         return (users[account].id != address(0) && users[account].role == role);
     }
 
-    function _addUser(
-        Types.UserDetails memory user,
-        address myAccount
-    ) internal {
+    function _addUser(Types.UserDetails memory user, address myAccount) public {
         require(myAccount != address(0), "Your address is Empty");
         require(user.id != address(0), "User's address is Empty");
         if (get(myAccount).role != Types.UserRole.Admin) {
@@ -63,16 +70,5 @@ contract Users {
         require(account != address(0), "Addres is empty");
         require(users[account].id != address(0), "User does not exist");
         return users[account];
-    }
-
-    modifier onlyManufacturer() {
-        require(msg.sender != address(0), "Sender's address is Empty");
-        require(users[msg.sender].id != address(0), "User's address is Empty");
-        require(
-            Types.UserRole(users[msg.sender].role) ==
-                Types.UserRole.Manufacturer,
-            "Manufacturer role required"
-        );
-        _;
     }
 }

@@ -3,7 +3,7 @@
 Project Structure:
 
 - `Admin`:
-  - adds users
+  - [OK] adds users
   - confirms recepies
 - `Base Manufacturer`:
   - adds products
@@ -23,12 +23,16 @@ Project Structure:
 - `Client`:
   - buys products(in smaller quantity)
 
+Contracts:
+
+- `Users`
+- `Products`
+- `ObjectTransfers`
+
 TODO:
 
 - add product (M)
 - send product to other user (V)
-
-*
 
 System Requirements:
 
@@ -69,3 +73,15 @@ REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat run scripts/deploy.js
 ```
+
+Learnings:
+
+Revert
+If a transaction reverts, from the blockchain's state of view, it's like it never happened. No changes are stored. But the transaction is still visible off-chain, as a reverted transaction - but still no changes are stored, and this includes also event emittance.
+
+A reverted transaction is included in a block, so in that sense it's a regular transaction. So it does leave a permanent trace
+
+Delete in dynamic array:
+When you delete an element from a dynamic array, the memory it occupies is not actually freed. Instead, the element is simply marked as deleted and will not be returned when you access the array
+
+Cheatsheet: https://docs.soliditylang.org/en/develop/cheatsheet.html

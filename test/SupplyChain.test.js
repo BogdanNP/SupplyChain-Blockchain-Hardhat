@@ -22,48 +22,54 @@ describe("SupplyChain", function () {
     const name = "Bogdan";
     const email = "bogdan@gmail.com";
     const [owner] = await ethers.getSigners();
+
+    const UsersContract = await ethers.getContractFactory("Users");
+    const usersContract = await UsersContract.deploy(name, email);
+
     const SupplyChain = await ethers.getContractFactory("SupplyChain");
-    const supplyChain = await SupplyChain.deploy(name, email);
-    return { supplyChain, owner, name, email };
+    const supplyChain = await SupplyChain.deploy(usersContract.getAddress());
+    return { supplyChain, usersContract, owner, name, email };
   }
 
   describe("Deployment", function () {
     it("Should set the right name", async function () {
-      const { supplyChain, owner, name } = await loadFixture(
+      const { supplyChain, _, owner, name } = await loadFixture(
         deploySupplyChainContract
       );
-      const user = await supplyChain.users(owner.address);
+      const user = await supplyChain.getUser(owner.address);
       expect(user.name).to.equal(name);
     });
 
     it("Should set the right email", async function () {
-      const { supplyChain, owner, _, email } = await loadFixture(
+      const { supplyChain, _, owner, __, email } = await loadFixture(
         deploySupplyChainContract
       );
-      const user = await supplyChain.users(owner.address);
+      const user = await supplyChain.getUser(owner.address);
       expect(user.email).to.equal(email);
     });
 
     it("Should set the right owner", async function () {
-      const { supplyChain, owner } = await loadFixture(
+      const { supplyChain, _, owner } = await loadFixture(
         deploySupplyChainContract
       );
-      const user = await supplyChain.users(owner.address);
+      const user = await supplyChain.getUser(owner.address);
       expect(user.id).to.equal(owner.address);
     });
 
     it("Should set the right role", async function () {
-      const { supplyChain, owner } = await loadFixture(
+      const { supplyChain, _, owner } = await loadFixture(
         deploySupplyChainContract
       );
-      const user = await supplyChain.users(owner.address);
+      const user = await supplyChain.getUser(owner.address);
       expect(user.role).to.equal(0);
     });
   });
 
   describe("Users", function () {
     it("Add Manufacturer", async function () {
-      const { supplyChain } = await loadFixture(deploySupplyChainContract);
+      const { supplyChain, usersContract } = await loadFixture(
+        deploySupplyChainContract
+      );
       const [_, manufacturer] = await ethers.getSigners();
       const manufacturerName = "Manufacturer Name";
       const manufacturerEmail = "manufacturer@gmail.com";
@@ -75,7 +81,7 @@ describe("SupplyChain", function () {
       };
 
       await expect(supplyChain.addUser(newManufacturer))
-        .to.emit(supplyChain, "NewUser")
+        .to.emit(usersContract, "NewUser")
         .withArgs(
           manufacturer.address,
           manufacturerName,
@@ -85,7 +91,9 @@ describe("SupplyChain", function () {
     });
 
     it("Add Supplier", async function () {
-      const { supplyChain } = await loadFixture(deploySupplyChainContract);
+      const { supplyChain, usersContract } = await loadFixture(
+        deploySupplyChainContract
+      );
       const [_, supplier] = await ethers.getSigners();
       const supplierName = "Supplier Name";
       const supplierEmail = "supplier@gmail.com";
@@ -96,18 +104,20 @@ describe("SupplyChain", function () {
         email: supplierEmail,
       };
 
-      supplyChain.on("NewUser", async (...newUser) => {
-        const [name, email, role] = newUser;
-        expect(name).to.equal(supplierName);
-        expect(email).to.equal(supplierEmail);
-        expect(role.toNumber()).to.equal(UserRoles.Supplier);
-      });
-
-      supplyChain.addUser(newSupplier);
+      await expect(supplyChain.addUser(newSupplier))
+        .to.emit(usersContract, "NewUser")
+        .withArgs(
+          supplier.address,
+          supplierName,
+          supplierEmail,
+          UserRoles.Supplier
+        );
     });
 
     it("Add Vendor", async function () {
-      const { supplyChain } = await loadFixture(deploySupplyChainContract);
+      const { supplyChain, usersContract } = await loadFixture(
+        deploySupplyChainContract
+      );
       const [_, vendor] = await ethers.getSigners();
       const vendorName = "Vendor Name";
       const vendorEmail = "vendor@gmail.com";
@@ -118,14 +128,9 @@ describe("SupplyChain", function () {
         email: vendorEmail,
       };
 
-      supplyChain.on("NewUser", async (...newUser) => {
-        const [name, email, role] = newUser;
-        expect(name).to.equal(vendorName);
-        expect(email).to.equal(vendorEmail);
-        expect(role.toNumber()).to.equal(UserRoles.Vendor);
-      });
-
-      supplyChain.addUser(newVendor);
+      await expect(supplyChain.addUser(newVendor))
+        .to.emit(usersContract, "NewUser")
+        .withArgs(vendor.address, vendorName, vendorEmail, UserRoles.Vendor);
     });
 
     it("Not Admin Tries to Add User", async function () {
@@ -479,12 +484,12 @@ describe("SupplyChain", function () {
 
       const productQuantity1 = {
         productType: newProductType1,
-        quantity: 5,
+        quantity: 12,
       };
 
       const productQuantity2 = {
         productType: newProductType2,
-        quantity: 5,
+        quantity: 12,
       };
 
       const recepie = {
@@ -508,12 +513,27 @@ describe("SupplyChain", function () {
           parseInt(Date.now() / 100000) * 100 + 86400
         );
 
-      const userLinkedProducts = await supplyChain.userLinkedProducts(
+      const userLinkedProduct2 = await supplyChain.userLinkedProducts(
         manufacturer.address,
         2
       );
+      const userLinkedProduct1 = await supplyChain.userLinkedProducts(
+        manufacturer.address,
+        1
+      );
+      const userLinkedProduct0 = await supplyChain.userLinkedProducts(
+        manufacturer.address,
+        0
+      );
 
-      console.log(userLinkedProducts);
+      console.log(userLinkedProduct2, userLinkedProduct1, userLinkedProduct0);
+
+      const product0 = await supplyChain.products(0);
+      const product1 = await supplyChain.products(1);
+      const product2 = await supplyChain.products(2);
+      console.log(product0);
+      console.log(product1);
+      console.log(product2);
     });
   });
 });

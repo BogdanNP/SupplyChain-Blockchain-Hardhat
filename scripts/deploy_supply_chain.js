@@ -4,7 +4,7 @@ async function main() {
   console.log("Types address:", await types.getAddress());
 
   const Users = await ethers.getContractFactory("Users");
-  const users = await Users.deploy();
+  const users = await Users.deploy("Bogdan", "bogdan@gmail.com");
   console.log("Users address:", await users.getAddress());
 
   const Products = await ethers.getContractFactory("Products");
@@ -12,7 +12,7 @@ async function main() {
   console.log("Products address:", await products.getAddress());
 
   const SupplyChain = await ethers.getContractFactory("SupplyChain");
-  const supply_chain = await SupplyChain.deploy("Bogdan", "bogdan@gmail.com");
+  const supply_chain = await SupplyChain.deploy(users.getAddress());
   console.log("SupplyChain address:", await supply_chain.getAddress());
 }
 
