@@ -7,8 +7,10 @@ import "hardhat/console.sol";
 import "./Types.sol";
 
 contract Products {
-    mapping(string => Types.ProductType) internal productTypes; // product type id => product type
-    mapping(string => Types.Product) internal products; // barcodeId => product
+    constructor() {}
+
+    mapping(uint256 => Types.ProductType) internal productTypes; // product type id => product type
+    mapping(string => Types.Product) public products; // barcodeId => product
     mapping(address => string[]) public userLinkedProducts; // address => list of product barcodeIds
     mapping(address => uint256) public productCounter;
     mapping(address => uint256) public productTypeCounter;
@@ -24,7 +26,7 @@ contract Products {
         uint256 expDateEpoch
     );
 
-    event NewProductType(string name, string id);
+    event NewProductType(address manufacturerId, string name, uint256 id);
 
     event ProductOwnershipTransferRequest(
         string name,
@@ -52,30 +54,54 @@ contract Products {
     // Contract Methods
 
     function _addProductType(
-        Types.ProductType memory productType_
-    ) internal productTypeIsValid(productType_.id) {
-        productTypes[productType_.id] = productType_;
-        emit NewProductType(productType_.name, productType_.id);
+        Types.ProductTypeAddDTO memory productType_,
+        address myAccount
+    ) public {
+        productCounter[myAccount]++;
+        productTypes[productTypeCounter[myAccount]] = Types.ProductType(
+            productTypeCounter[myAccount],
+            productType_.name,
+            productType_.details
+        );
+        emit NewProductType(
+            myAccount,
+            productType_.name,
+            productTypeCounter[myAccount]
+        );
     }
 
     function _addProduct(
-        Types.Product memory product_,
+        Types.ProductAddDTO memory product_,
+        string memory manufacturerName,
         address myAccount
-    ) internal productIsValid(product_.barcodeId) {
-        require(
-            product_.manufacturerId == myAccount,
-            "Only manufacturer can add products"
+    ) public {
+        // require(
+        //     product_.manufacturerId == myAccount,
+        //     "Only manufacturer can add products"
+        // );
+        string memory barcodeId = "AAA";
+        Types.Product memory product = Types.Product(
+            product_.name,
+            product_.productTypeId,
+            barcodeId,
+            manufacturerName,
+            myAccount,
+            product_.manufacturingDate,
+            product_.expirationDate,
+            product_.isBatch,
+            product_.batchCount,
+            product_.composition
         );
-        products[product_.barcodeId] = product_;
+        products[barcodeId] = product;
         productCounter[msg.sender]++;
-        userLinkedProducts[msg.sender].push(product_.barcodeId);
+        userLinkedProducts[msg.sender].push(barcodeId);
 
         emit NewProduct(
-            product_.name,
-            product_.manufacturerName,
-            product_.barcodeId,
-            product_.manufacturingDate,
-            product_.expirationDate
+            product.name,
+            product.manufacturerName,
+            product.barcodeId,
+            product.manufacturingDate,
+            product.expirationDate
         );
     }
 
@@ -83,28 +109,43 @@ contract Products {
         Types.Recepie memory recepie_,
         string memory productName,
         Types.UserDetails memory user
-    ) internal {
+    ) public {
+        // iterate through required products by the recepie
         for (uint i = 0; i < recepie_.productQuantities.length; ++i) {
-            recepie_.productQuantities[i];
+            // iterate through user linked products
             for (uint j = 0; j < userLinkedProducts[user.id].length; ++j) {
+                // check if user product is in the recepie
                 if (
-                    compareStrings(
-                        recepie_.productQuantities[i].productType.id,
-                        products[userLinkedProducts[user.id][j]].productType.id
-                    )
+                    recepie_.productQuantities[i].productTypeId ==
+                    products[userLinkedProducts[user.id][j]].productTypeId
                 ) {
+                    // check if the quantity is enough for the recepie
                     require(
                         recepie_.productQuantities[i].quantity <=
                             products[userLinkedProducts[user.id][j]].batchCount,
-                        "Too few products with product type"
+                        "Recepie requires user to have more quantity of some product"
                     );
+
+                    // update the quantity of used products
+                    products[userLinkedProducts[user.id][j]]
+                        .batchCount -= recepie_.productQuantities[i].quantity;
+
+                    // check if the quantity is 0 and delete the products
+                    if (
+                        products[userLinkedProducts[user.id][j]].batchCount == 0
+                    ) {
+                        // TODO: check this
+                        delete products[userLinkedProducts[user.id][j]];
+                        delete userLinkedProducts[user.id][j];
+                    }
                 }
             }
         }
 
+        // create the new product
         Types.Product memory product_ = Types.Product(
             productName,
-            recepie_.result,
+            recepie_.resultTypeId,
             toString(productCounter[user.id]), //TODO: generate barcode id
             user.name,
             user.id,
@@ -114,13 +155,17 @@ contract Products {
             recepie_.quantityResult,
             recepie_.composition
         );
+
+        // register the product in the products list
         products[product_.barcodeId] = product_;
+
+        // increase the productCounter
         productCounter[msg.sender]++;
+
+        // link the product to the user
         userLinkedProducts[msg.sender].push(product_.barcodeId);
 
-        // delete used products
-        // decrease quantities
-
+        // toString(userLinkedProducts[user.id].length),
         emit NewProduct(
             product_.name,
             product_.manufacturerName,
@@ -134,9 +179,12 @@ contract Products {
         string memory barcodeId_,
         Types.UserDetails memory buyer_,
         Types.UserDetails memory seller_,
-        uint256 currentTime_
-    ) internal {
+        uint256 currentTime_,
+        uint256 quantity_
+    ) public {
         Types.Product memory product_ = products[barcodeId_];
+        require(product_.batchCount > quantity_, "Unavailable quantity");
+        product_.batchCount = quantity_;
         // store sell request
         waitingProducts[buyer_.id][product_.barcodeId] = product_;
         emit ProductOwnershipTransferRequest(
@@ -157,7 +205,7 @@ contract Products {
         Types.UserDetails memory seller_,
         uint256 currentTime_,
         bool acceptSell
-    ) internal {
+    ) public {
         Types.Product memory product_ = products[barcodeId_];
         delete waitingProducts[buyer_.id][product_.barcodeId];
 
@@ -199,7 +247,7 @@ contract Products {
 
     // Modifiers
 
-    modifier productTypeIsValid(string memory id_) {
+    modifier productTypeIsValid(uint256 id_) {
         require(
             compareStrings(productTypes[id_].name, ""),
             "Product type already exists"
@@ -221,7 +269,7 @@ contract Products {
         address sellerId_,
         address buyerId_,
         string memory barcodeId_
-    ) internal {
+    ) public {
         string[] memory sellerProducts_ = userLinkedProducts[sellerId_];
         uint256 matchIndex_ = (sellerProducts_.length + 1);
         for (uint256 i = 0; i < sellerProducts_.length; ++i) {

@@ -16,25 +16,34 @@ library Types {
         address id;
         string name;
         string email;
+        // TODO: add this
+        // string cf;
+    }
+
+    struct ProductTypeAddDTO {
+        string name;
+        string details;
     }
 
     struct ProductType {
-        string id;
+        uint256 id;
         string name;
-        string[] details;
+        string details;
     }
 
-    // barcode
-    // EAN-13:
-    // 2 number system // region
-    // 5 manufacturer code // ~100k manufacurers
-    // 5 product code // ~100k products/manufacturer
-    //      * link manufacturer => productCodeCounter
-    // 1 check digit
+    struct ProductAddDTO {
+        string name;
+        uint256 productTypeId;
+        uint256 manufacturingDate;
+        uint256 expirationDate;
+        bool isBatch;
+        uint256 batchCount;
+        string composition;
+    }
 
     struct Product {
         string name;
-        ProductType productType;
+        uint256 productTypeId;
         string barcodeId;
         string manufacturerName;
         address manufacturerId;
@@ -42,18 +51,26 @@ library Types {
         uint256 expirationDate;
         bool isBatch;
         uint256 batchCount;
-        string[] composition;
+        string composition;
+    }
+
+    struct ProductQuantity {
+        uint256 productTypeId;
+        uint256 quantity;
     }
 
     struct Recepie {
         ProductQuantity[] productQuantities; // product type id => quantity in kg
-        ProductType result;
+        uint256 resultTypeId;
         uint256 quantityResult;
-        string[] composition;
-    }
-
-    struct ProductQuantity {
-        ProductType productType;
-        uint256 quantity;
+        string composition;
     }
 }
+
+// barcode
+// EAN-13:
+// 2 number system // region
+// 5 manufacturer code // ~100k manufacurers
+// 5 product code // ~100k products/manufacturer
+//      * link manufacturer => productCodeCounter
+// 1 check digit

@@ -5,32 +5,39 @@ pragma solidity >=0.7.3;
 
 import "hardhat/console.sol";
 import "./Products.sol";
-import "./Users.sol";
+import "./UsersInterface.sol";
+import "./ProductsInterface.sol";
 import "./Types.sol";
 
-contract SupplyChain is Users, Products {
-    constructor(string memory name_, string memory email_) {
-        Types.UserDetails memory admin_ = Types.UserDetails({
-            role: Types.UserRole.Admin,
-            id: msg.sender,
-            name: name_,
-            email: email_
-        });
-        add(admin_);
+contract SupplyChain {
+    UsersInterface public users;
+    ProductsInterface public products;
+
+    constructor(address usersAddress, address productsAddress) {
+        users = UsersInterface(usersAddress);
+        products = ProductsInterface(productsAddress);
     }
 
     function addUser(Types.UserDetails memory user_) public {
-        _addUser(user_, msg.sender);
+        users._addUser(user_, msg.sender);
     }
 
-    function addProduct(Types.Product memory product_) public onlyManufacturer {
-        _addProduct(product_, msg.sender);
+    function getUser(
+        address userAddress
+    ) public view returns (Types.UserDetails memory user) {
+        return users.get(userAddress);
+    }
+
+    function addProduct(
+        Types.ProductAddDTO memory product_
+    ) public onlyManufacturer {
+        products._addProduct(product_, users.get(msg.sender).name, msg.sender);
     }
 
     function addProductType(
-        Types.ProductType memory productType_
+        Types.ProductTypeAddDTO memory productType_
     ) public onlyManufacturer {
-        _addProductType(productType_);
+        products._addProductType(productType_, msg.sender);
     }
 
     // function sellProduct(
@@ -45,11 +52,12 @@ contract SupplyChain is Users, Products {
     // function createSellRequest(
     //     address buyerId_,
     //     string memory barcodeId_,
-    //     uint256 currentTime_
+    //     uint256 currentTime_,
+    //     uint256 quantity
     // ) public {
-    //     Types.UserDetails memory buyer = users[buyerId_];
-    //     Types.UserDetails memory seller = users[msg.sender];
-    //     _createSellRequest(barcodeId_, buyer, seller, currentTime_);
+    //     Types.UserDetails memory buyer = users.get(buyerId_);
+    //     Types.UserDetails memory seller = users.get(msg.sender);
+    //     _createSellRequest(barcodeId_, buyer, seller, currentTime_, quantity);
     // }
 
     // function acceptSellRequest(
@@ -58,8 +66,8 @@ contract SupplyChain is Users, Products {
     //     uint256 currentTime_,
     //     bool acceptSell
     // ) public {
-    //     Types.UserDetails memory buyer = users[msg.sender];
-    //     Types.UserDetails memory seller = users[sellerId_];
+    //     Types.UserDetails memory buyer = users.get(msg.sender);
+    //     Types.UserDetails memory seller = users.get(sellerId_);
     //     _acceptSellRequest(barcodeId_, buyer, seller, currentTime_, acceptSell);
     // }
 
@@ -67,7 +75,22 @@ contract SupplyChain is Users, Products {
         Types.Recepie memory recepie_,
         string memory productName
     ) public onlyManufacturer {
-        Types.UserDetails memory user = users[msg.sender];
-        _createProduct(recepie_, productName, user);
+        Types.UserDetails memory user = users.get(msg.sender);
+        products._createProduct(recepie_, productName, user);
+    }
+
+    // Modifiers
+    modifier onlyManufacturer() {
+        require(msg.sender != address(0), "Sender's address is Empty");
+        require(
+            users.get(msg.sender).id != address(0),
+            "User's address is Empty"
+        );
+        require(
+            Types.UserRole(users.get(msg.sender).role) ==
+                Types.UserRole.Manufacturer,
+            "Manufacturer role required"
+        );
+        _;
     }
 }

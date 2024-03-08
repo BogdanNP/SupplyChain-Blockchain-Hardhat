@@ -1,5 +1,14 @@
 # SupplyChain Hardhat Project
 
+How to run:
+
+- How to deploy blockchain contracts:
+  - `npx hardhat run scripts/deploy_supply_chain.js`
+- How to run a local environment for the blockchain:
+  - `npx hardhat node --network localhost`
+- How to start the front-end(eth-app-react):
+  - `npm start`
+
 Project Structure:
 
 - `Admin`:
@@ -23,20 +32,37 @@ Project Structure:
 - `Client`:
   - buys products(in smaller quantity)
 
+Objects Structure:
+
+- User:
+  - [role, id, name, email, cf]
+- ProductType:
+  - [id, name, details]
+- Product:
+  - name: String
+  - typeId: String
+  - barcodeId: String
+  - manufacturerName: String
+  - manufacturerId
+  - manufacturingDate
+  - expirationDate
+  - isBatch: bool
+  - batchCount: int
+  - composition: String[]
+
 Contracts:
 
 - `Users` + `UsersInterface`
 - `Products` + `ProductsInterface` // TBD
 - `ProductTransfers` + `ProductTransfersInterface` // TBD + TBT
-- fix tests
-- deploy
-- implement FE
 
 TODO:
 
 - change logic to use interfaces, not inheritance
 - update product transfer logic + test it // use the new ObjectTransfer contract
--
+- fix tests
+- deploy
+- implement FE
 
 System Requirements:
 
@@ -89,3 +115,5 @@ Delete in dynamic array:
 When you delete an element from a dynamic array, the memory it occupies is not actually freed. Instead, the element is simply marked as deleted and will not be returned when you access the array
 
 Cheatsheet: https://docs.soliditylang.org/en/develop/cheatsheet.html
+
+The "is" keyword: is used for inheritance in Solidity (https://docs.soliditylang.org/en/develop/contracts.html#inheritance)

@@ -12,7 +12,10 @@ async function main() {
   console.log("Products address:", await products.getAddress());
 
   const SupplyChain = await ethers.getContractFactory("SupplyChain");
-  const supply_chain = await SupplyChain.deploy(users.getAddress());
+  const supply_chain = await SupplyChain.deploy(
+    users.getAddress(),
+    products.getAddress()
+  );
   console.log("SupplyChain address:", await supply_chain.getAddress());
 }
 
