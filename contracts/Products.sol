@@ -7,15 +7,46 @@ import "hardhat/console.sol";
 import "./Types.sol";
 
 contract Products {
-    constructor() {}
+    constructor() {
+        Types.ProductTypeAddDTO[]
+            memory predefinedProductTypes = new Types.ProductTypeAddDTO[](3);
+        predefinedProductTypes[0] = Types.ProductTypeAddDTO("PT0", "D0");
+        predefinedProductTypes[1] = Types.ProductTypeAddDTO("PT1", "D1");
+        predefinedProductTypes[2] = Types.ProductTypeAddDTO("PT2", "D2");
+        _addProductTypeList(predefinedProductTypes);
+        Types.Recepie[] memory predefinedRecepies = new Types.Recepie[](1);
+        Types.RecepieIngredient[]
+            memory predefinedRecepieIngredients = new Types.RecepieIngredient[](
+                2
+            );
+        predefinedRecepieIngredients[0] = Types.RecepieIngredient(0, 0, 6);
+        predefinedRecepieIngredients[1] = Types.RecepieIngredient(0, 1, 6);
+        recepieIngredients[0][0] = predefinedRecepieIngredients[0];
+        recepieIngredients[0][1] = predefinedRecepieIngredients[1];
+        predefinedRecepies[0] = Types.Recepie(0, 2, "PT2", 2, 6, "");
+        _addRecepieList(predefinedRecepies);
+    }
 
-    mapping(uint256 => Types.ProductType) internal productTypes; // product type id => product type
-    mapping(string => Types.Product) public products; // barcodeId => product
-    mapping(address => string[]) public userLinkedProducts; // address => list of product barcodeIds
+    // product type id => product type
+    mapping(uint256 => Types.ProductType) public productTypes;
+    uint256 public productTypeCounter = 0;
+    // barcodeId => product
+    mapping(string => Types.Product) public products;
+    // address => list of product barcodeIds
+    mapping(address => string[]) public userLinkedProducts;
     mapping(address => uint256) public productCounter;
-    mapping(address => uint256) public productTypeCounter;
     mapping(address => mapping(string => Types.Product))
         internal waitingProducts;
+
+    mapping(uint256 => mapping(uint256 => Types.RecepieIngredient))
+        public recepieIngredients;
+    mapping(uint256 => Types.Recepie) public recepies;
+    uint256 public recepieCounter = 0;
+
+    // links one product barcodeId to it's parents barcodeId,
+    // the number of parents is stored in the recepie, number of ingredients
+    mapping(string => string[]) parentProducts;
+
     // Events
 
     event NewProduct(
@@ -26,7 +57,8 @@ contract Products {
         uint256 expDateEpoch
     );
 
-    event NewProductType(address manufacturerId, string name, uint256 id);
+    event NewProductType(string name, uint256 id);
+    event NewRecepie(uint256 id, uint256 resultTypeId, string resultTypeName);
 
     event ProductOwnershipTransferRequest(
         string name,
@@ -53,21 +85,40 @@ contract Products {
 
     // Contract Methods
 
-    function _addProductType(
-        Types.ProductTypeAddDTO memory productType_,
-        address myAccount
+    function _addRecepieList(Types.Recepie[] memory recepieList) public {
+        for (uint i = 0; i < recepieList.length; i++) {
+            _addRecepie(recepieList[i]);
+        }
+    }
+
+    function _addRecepie(Types.Recepie memory recepie) public {
+        recepies[recepieCounter] = recepie;
+        emit NewRecepie(
+            recepie.id,
+            recepie.resultTypeId,
+            recepie.resultTypeName
+        );
+        recepieCounter++;
+    }
+
+    function _addProductTypeList(
+        Types.ProductTypeAddDTO[] memory productTypeList
     ) public {
-        productCounter[myAccount]++;
-        productTypes[productTypeCounter[myAccount]] = Types.ProductType(
-            productTypeCounter[myAccount],
-            productType_.name,
-            productType_.details
+        for (uint i = 0; i < productTypeList.length; i++) {
+            _addProductType(productTypeList[i]);
+        }
+    }
+
+    function _addProductType(
+        Types.ProductTypeAddDTO memory productType
+    ) public {
+        productTypes[productTypeCounter] = Types.ProductType(
+            productTypeCounter,
+            productType.name,
+            productType.details
         );
-        emit NewProductType(
-            myAccount,
-            productType_.name,
-            productTypeCounter[myAccount]
-        );
+        emit NewProductType(productType.name, productTypeCounter);
+        productTypeCounter++;
     }
 
     function _addProduct(
@@ -79,7 +130,7 @@ contract Products {
         //     product_.manufacturerId == myAccount,
         //     "Only manufacturer can add products"
         // );
-        string memory barcodeId = "AAA";
+        string memory barcodeId = toString(productCounter[myAccount]);
         Types.Product memory product = Types.Product(
             product_.name,
             product_.productTypeId,
@@ -93,9 +144,11 @@ contract Products {
             product_.composition
         );
         products[barcodeId] = product;
-        productCounter[msg.sender]++;
-        userLinkedProducts[msg.sender].push(barcodeId);
+        productCounter[myAccount]++;
+        userLinkedProducts[myAccount].push(barcodeId);
 
+        // console.log(myAccount);
+        // console.log(productCounter[myAccount]);
         emit NewProduct(
             product.name,
             product.manufacturerName,
@@ -106,41 +159,63 @@ contract Products {
     }
 
     function _createProduct(
-        Types.Recepie memory recepie_,
+        uint256 recepieId,
         string memory productName,
         Types.UserDetails memory user
     ) public {
+        Types.Recepie memory recepie_ = recepies[recepieId];
+        string[] memory _parentProducts = new string[](
+            recepie_.ingredientsCount
+        );
+        uint256 ingredientsCount = 0;
         // iterate through required products by the recepie
-        for (uint i = 0; i < recepie_.productQuantities.length; ++i) {
-            // iterate through user linked products
-            for (uint j = 0; j < userLinkedProducts[user.id].length; ++j) {
+        for (uint j = 0; j < userLinkedProducts[user.id].length; ++j) {
+            for (uint i = 0; i < recepie_.ingredientsCount; ++i) {
+                // iterate through user linked products
                 // check if user product is in the recepie
                 if (
-                    recepie_.productQuantities[i].productTypeId ==
-                    products[userLinkedProducts[user.id][j]].productTypeId
+                    (recepieIngredients[recepie_.id][i].productQuantity <=
+                        products[userLinkedProducts[user.id][j]].batchCount) &&
+                    (recepieIngredients[recepie_.id][i].productTypeId ==
+                        products[userLinkedProducts[user.id][j]].productTypeId)
                 ) {
                     // check if the quantity is enough for the recepie
-                    require(
-                        recepie_.productQuantities[i].quantity <=
-                            products[userLinkedProducts[user.id][j]].batchCount,
-                        "Recepie requires user to have more quantity of some product"
-                    );
+                    // require(
+                    //     recepieIngredients[recepie_.id][i].productQuantity <=
+                    //         products[userLinkedProducts[user.id][j]].batchCount,
+                    //     "Recepie requires user to have more quantity of some product"
+                    // );
+                    // save the barcodeId of the used product
+                    _parentProducts[ingredientsCount] = products[
+                        userLinkedProducts[user.id][j]
+                    ].barcodeId;
+
+                    // count ingredient used
+                    ingredientsCount++;
 
                     // update the quantity of used products
                     products[userLinkedProducts[user.id][j]]
-                        .batchCount -= recepie_.productQuantities[i].quantity;
+                        .batchCount -= recepieIngredients[recepie_.id][i]
+                        .productQuantity;
 
                     // check if the quantity is 0 and delete the products
                     if (
                         products[userLinkedProducts[user.id][j]].batchCount == 0
                     ) {
                         // TODO: check this
-                        delete products[userLinkedProducts[user.id][j]];
-                        delete userLinkedProducts[user.id][j];
+                        // maybe dont delete this...
+                        // delete products[userLinkedProducts[user.id][j]];
+                        // delete userLinkedProducts[user.id][j];
                     }
                 }
             }
         }
+
+        // check if all ingredients were found and used
+        require(
+            ingredientsCount == recepie_.ingredientsCount,
+            "There are some products missing"
+        );
 
         // create the new product
         Types.Product memory product_ = Types.Product(
@@ -156,14 +231,18 @@ contract Products {
             recepie_.composition
         );
 
+        // register the product in parentProducts list
+        // in order to keep track of its creation
+        parentProducts[product_.barcodeId] = _parentProducts;
+
         // register the product in the products list
         products[product_.barcodeId] = product_;
 
         // increase the productCounter
-        productCounter[msg.sender]++;
+        productCounter[user.id]++;
 
         // link the product to the user
-        userLinkedProducts[msg.sender].push(product_.barcodeId);
+        userLinkedProducts[user.id].push(product_.barcodeId);
 
         // toString(userLinkedProducts[user.id].length),
         emit NewProduct(

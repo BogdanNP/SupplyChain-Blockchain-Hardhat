@@ -31,6 +31,24 @@ library Types {
         string details;
     }
 
+    // Deci, nu putem avea liste de liste
+    // Asadar trebuie sa ieram fiecare element si sa il salvam in FE
+
+    struct RecepieIngredient {
+        uint256 recepieId;
+        uint256 productTypeId;
+        uint256 productQuantity;
+    }
+
+    struct Recepie {
+        uint256 id;
+        uint256 resultTypeId;
+        string resultTypeName;
+        uint256 ingredientsCount;
+        uint256 quantityResult;
+        string composition;
+    }
+
     struct ProductAddDTO {
         string name;
         uint256 productTypeId;
@@ -51,18 +69,6 @@ library Types {
         uint256 expirationDate;
         bool isBatch;
         uint256 batchCount;
-        string composition;
-    }
-
-    struct ProductQuantity {
-        uint256 productTypeId;
-        uint256 quantity;
-    }
-
-    struct Recepie {
-        ProductQuantity[] productQuantities; // product type id => quantity in kg
-        uint256 resultTypeId;
-        uint256 quantityResult;
         string composition;
     }
 }

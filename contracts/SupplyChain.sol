@@ -35,9 +35,9 @@ contract SupplyChain {
     }
 
     function addProductType(
-        Types.ProductTypeAddDTO memory productType_
-    ) public onlyManufacturer {
-        products._addProductType(productType_, msg.sender);
+        Types.ProductTypeAddDTO memory productType_ // TODO: add a modifier, maybe onlyAdmin ?
+    ) public {
+        products._addProductType(productType_);
     }
 
     // function sellProduct(
@@ -72,11 +72,11 @@ contract SupplyChain {
     // }
 
     function createProduct(
-        Types.Recepie memory recepie_,
+        uint256 recepieId,
         string memory productName
     ) public onlyManufacturer {
         Types.UserDetails memory user = users.get(msg.sender);
-        products._createProduct(recepie_, productName, user);
+        products._createProduct(recepieId, productName, user);
     }
 
     // Modifiers

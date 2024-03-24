@@ -1,5 +1,25 @@
 # SupplyChain Hardhat Project
 
+Key Functionalities:
+
+- [OK] Add User
+- Register / Login User
+- Add ProductType / Create them at the project init
+- Add Recepie / Create them at the project init
+- Add Product
+  - Base Product
+  - Transform other products to create a new one
+- Sell Product
+  - Create Sell Request
+  - Accept / Decline
+  - Transfer Object
+
+Steps:
+
+- Add ProductType
+- Add Recepie
+- Create Product
+
 How to run:
 
 - How to deploy blockchain contracts:
@@ -53,12 +73,12 @@ Objects Structure:
 Contracts:
 
 - `Users` + `UsersInterface`
-- `Products` + `ProductsInterface` // TBD
+- `Products` + `ProductsInterface`
 - `ProductTransfers` + `ProductTransfersInterface` // TBD + TBT
 
 TODO:
 
-- change logic to use interfaces, not inheritance
+- [OK] change logic to use interfaces, not inheritance
 - update product transfer logic + test it // use the new ObjectTransfer contract
 - fix tests
 - deploy
@@ -117,3 +137,10 @@ When you delete an element from a dynamic array, the memory it occupies is not a
 Cheatsheet: https://docs.soliditylang.org/en/develop/cheatsheet.html
 
 The "is" keyword: is used for inheritance in Solidity (https://docs.soliditylang.org/en/develop/contracts.html#inheritance)
+
+Memory, Calldata, Storage: https://docs.alchemy.com/docs/when-to-use-storage-vs-memory-vs-calldata-in-solidity#:~:text=Memory%20is%20used%20to%20store,data%20permanently%20on%20the%20blockchain.
+
+msg.sender (sender of the message)
+The erson who's currently connecting with the contract, or the contract which s creating the call to other contract.
+That's why we need to send myAccount address when we make a call from SupplyChain.sol to Products.sol or any other contract.
+https://stackoverflow.com/questions/48562483/solidity-basics-what-msg-sender-stands-for
