@@ -71,12 +71,9 @@ contract SupplyChain {
     //     _acceptSellRequest(barcodeId_, buyer, seller, currentTime_, acceptSell);
     // }
 
-    function createProduct(
-        uint256 recepieId,
-        string memory productName
-    ) public onlyManufacturer {
+    function createProduct(uint256 recepieId) public onlyManufacturer {
         Types.UserDetails memory user = users.get(msg.sender);
-        products._createProduct(recepieId, productName, user);
+        products._createProduct(recepieId, user);
     }
 
     // Modifiers

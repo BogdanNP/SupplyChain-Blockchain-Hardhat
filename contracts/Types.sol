@@ -46,17 +46,14 @@ library Types {
         string resultTypeName;
         uint256 ingredientsCount;
         uint256 quantityResult;
-        string composition;
     }
 
     struct ProductAddDTO {
-        string name;
         uint256 productTypeId;
         uint256 manufacturingDate;
         uint256 expirationDate;
         bool isBatch;
         uint256 batchCount;
-        string composition;
     }
 
     struct Product {
@@ -69,7 +66,6 @@ library Types {
         uint256 expirationDate;
         bool isBatch;
         uint256 batchCount;
-        string composition;
     }
 }
 

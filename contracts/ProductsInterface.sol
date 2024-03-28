@@ -26,7 +26,6 @@ interface ProductsInterface {
 
     function _createProduct(
         uint256 recepieId,
-        string memory productName,
         Types.UserDetails memory user
     ) external;
 }

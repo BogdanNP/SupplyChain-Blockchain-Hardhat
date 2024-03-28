@@ -23,7 +23,7 @@ contract Products {
         predefinedRecepieIngredients[1] = Types.RecepieIngredient(0, 1, 6);
         recepieIngredients[0][0] = predefinedRecepieIngredients[0];
         recepieIngredients[0][1] = predefinedRecepieIngredients[1];
-        predefinedRecepies[0] = Types.Recepie(0, 2, "PT2", 2, 6, "");
+        predefinedRecepies[0] = Types.Recepie(0, 2, "PT2", 2, 6);
         _addRecepieList(predefinedRecepies);
     }
 
@@ -132,7 +132,7 @@ contract Products {
         // );
         string memory barcodeId = toString(productCounter[myAccount]);
         Types.Product memory product = Types.Product(
-            product_.name,
+            productTypes[product_.productTypeId].name,
             product_.productTypeId,
             barcodeId,
             manufacturerName,
@@ -140,8 +140,7 @@ contract Products {
             product_.manufacturingDate,
             product_.expirationDate,
             product_.isBatch,
-            product_.batchCount,
-            product_.composition
+            product_.batchCount
         );
         products[barcodeId] = product;
         productCounter[myAccount]++;
@@ -160,7 +159,6 @@ contract Products {
 
     function _createProduct(
         uint256 recepieId,
-        string memory productName,
         Types.UserDetails memory user
     ) public {
         Types.Recepie memory recepie_ = recepies[recepieId];
@@ -219,7 +217,7 @@ contract Products {
 
         // create the new product
         Types.Product memory product_ = Types.Product(
-            productName,
+            recepie_.resultTypeName,
             recepie_.resultTypeId,
             toString(productCounter[user.id]), //TODO: generate barcode id
             user.name,
@@ -227,8 +225,7 @@ contract Products {
             (block.timestamp / 100) * 100,
             (block.timestamp / 100) * 100 + 86400, //TODO: 86400=1day in timestamp
             true,
-            recepie_.quantityResult,
-            recepie_.composition
+            recepie_.quantityResult
         );
 
         // register the product in parentProducts list
