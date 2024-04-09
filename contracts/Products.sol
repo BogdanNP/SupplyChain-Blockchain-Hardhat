@@ -45,7 +45,7 @@ contract Products {
 
     // links one product barcodeId to it's parents barcodeId,
     // the number of parents is stored in the recepie, number of ingredients
-    mapping(string => string[]) parentProducts;
+    mapping(string => string[]) public parentProducts;
 
     // Events
 
@@ -130,7 +130,10 @@ contract Products {
         //     product_.manufacturerId == myAccount,
         //     "Only manufacturer can add products"
         // );
-        string memory barcodeId = toString(productCounter[myAccount]);
+        string memory barcodeId = generateBarcode(
+            99,
+            productCounter[myAccount]
+        );
         Types.Product memory product = Types.Product(
             productTypes[product_.productTypeId].name,
             product_.productTypeId,
@@ -168,6 +171,9 @@ contract Products {
         uint256 ingredientsCount = 0;
         // iterate through required products by the recepie
         for (uint j = 0; j < userLinkedProducts[user.id].length; ++j) {
+            if (recepie_.ingredientsCount == ingredientsCount) {
+                break;
+            }
             for (uint i = 0; i < recepie_.ingredientsCount; ++i) {
                 // iterate through user linked products
                 // check if user product is in the recepie
@@ -219,7 +225,7 @@ contract Products {
         Types.Product memory product_ = Types.Product(
             recepie_.resultTypeName,
             recepie_.resultTypeId,
-            toString(productCounter[user.id]), //TODO: generate barcode id
+            generateBarcode(99, productCounter[user.id]), //TODO: add manufacturer code
             user.name,
             user.id,
             (block.timestamp / 100) * 100,
@@ -250,6 +256,12 @@ contract Products {
             product_.expirationDate
         );
     }
+
+    // function _trackProduct(
+    //     string memory barcodeId
+    // ) public returns (Types.Product[] memory) {
+    //     products[barcodeId];
+    // }
 
     function _createSellRequest(
         string memory barcodeId_,
@@ -375,6 +387,79 @@ contract Products {
     ) internal pure returns (bool) {
         return (keccak256(abi.encodePacked((a))) ==
             keccak256(abi.encodePacked((b))));
+    }
+
+    function generateBarcode(
+        uint256 manufacturerCode,
+        uint256 productCode
+    ) internal pure returns (string memory) {
+        uint256[5] memory manufacturerDigits = getLast5Digits(manufacturerCode);
+        uint256[5] memory productDigits = getLast5Digits(productCode);
+        uint256[] memory digits;
+        // region
+        digits[0] = 0;
+        digits[1] = 0;
+        for (uint256 i = 0; i < 12; ++i) {
+            if (i < 7) {
+                // manufacturer code
+                digits[i + 2] = manufacturerDigits[i];
+            } else {
+                // product code
+                digits[i + 2] = productDigits[i];
+            }
+        }
+        // check digit
+        digits[12] = checkDigit(digits);
+        // convert to string
+        return digitListToString(digits, 13);
+    }
+
+    function getLast5Digits(
+        uint256 number
+    ) internal pure returns (uint256[5] memory) {
+        uint256 val = number;
+        uint256 index = 4;
+        uint256[5] memory digits;
+        while (index >= 0) {
+            digits[index] = val % 10;
+            val /= 10;
+            index--;
+        }
+        return digits;
+    }
+
+    function checkDigit(
+        uint256[] memory digits
+    ) internal pure returns (uint256) {
+        uint256 evenSum = 0;
+        uint256 oddSum = 0;
+        for (uint i = 0; i < 12; ++i) {
+            if (i % 2 == 0) {
+                evenSum += digits[i];
+            } else {
+                oddSum += digits[i];
+            }
+        }
+        uint256 evenSum3 = evenSum * 3;
+        uint256 total = evenSum3 + oddSum;
+        uint256 remainder = total % 10;
+        if (remainder == 0) {
+            return remainder;
+        }
+        return 10 - remainder;
+    }
+
+    function digitListToString(
+        uint256[] memory digits,
+        uint256 length
+    ) internal pure returns (string memory) {
+        bytes memory buffer = new bytes(length);
+
+        for (uint256 i = 0; i < length; i++) {
+            buffer[i] = bytes1(uint8(48 + digits[i]));
+        }
+
+        return string(buffer);
     }
 
     function toString(uint256 value) internal pure returns (string memory) {
