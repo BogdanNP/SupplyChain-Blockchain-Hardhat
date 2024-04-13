@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.7.3;
+
+pragma experimental ABIEncoderV2;
+pragma solidity >=0.8.0;
 
 contract ObjectTransfers {
     enum ObjectStatus {
@@ -9,40 +11,53 @@ contract ObjectTransfers {
     }
 
     struct Transfer {
+        uint256 id;
         address sender;
         address receiver;
-        string objectDescription;
+        string barcodeId;
+        uint256 quantity;
         ObjectStatus status;
     }
 
-    Transfer[] public transfers;
+    mapping(uint256 => Transfer) public transfers;
+    uint256 public transferCount;
+    mapping(address => uint256[]) public accountTransfers;
+    mapping(address => uint256) public accountTransferCount;
 
     event ObjectTransferred(
         uint transferId,
         address sender,
         address receiver,
-        string objectDescription,
+        string barcodeId,
+        uint256 quantity,
         ObjectStatus status
     );
 
     function requestTransfer(
-        string memory _objectDescription,
+        string memory _barcodeId,
+        uint256 _quantity,
         address _receiver
     ) external {
         Transfer memory newTransfer = Transfer({
+            id: transferCount,
             sender: msg.sender,
             receiver: _receiver,
-            objectDescription: _objectDescription,
+            barcodeId: _barcodeId,
+            quantity: _quantity,
             status: ObjectStatus.Pending
         });
 
-        transfers.push(newTransfer);
+        transfers[transferCount] = (newTransfer);
+        accountTransfers[_receiver].push(transferCount);
+        accountTransferCount[_receiver]++;
+        transferCount++;
 
         emit ObjectTransferred(
-            transfers.length - 1,
+            transferCount - 1,
             msg.sender,
             _receiver,
-            _objectDescription,
+            _barcodeId,
+            _quantity,
             ObjectStatus.Pending
         );
     }
@@ -63,7 +78,8 @@ contract ObjectTransfers {
             _transferId,
             transfers[_transferId].sender,
             msg.sender,
-            transfers[_transferId].objectDescription,
+            transfers[_transferId].barcodeId,
+            transfers[_transferId].quantity,
             ObjectStatus.Accepted
         );
     }
@@ -84,7 +100,8 @@ contract ObjectTransfers {
             _transferId,
             transfers[_transferId].sender,
             msg.sender,
-            transfers[_transferId].objectDescription,
+            transfers[_transferId].barcodeId,
+            transfers[_transferId].quantity,
             ObjectStatus.Refused
         );
     }
@@ -93,22 +110,5 @@ contract ObjectTransfers {
         uint _transferId
     ) external view returns (ObjectStatus) {
         return transfers[_transferId].status;
-    }
-
-    function getPendingTransfers() external view returns (uint[] memory) {
-        uint[] memory pendingTransfers;
-        uint count = 0;
-
-        for (uint i = 0; i < transfers.length; i++) {
-            if (
-                transfers[i].receiver == msg.sender &&
-                transfers[i].status == ObjectStatus.Pending
-            ) {
-                pendingTransfers[count] = i;
-                count++;
-            }
-        }
-
-        return pendingTransfers;
     }
 }

@@ -31,9 +31,6 @@ library Types {
         string details;
     }
 
-    // Deci, nu putem avea liste de liste
-    // Asadar trebuie sa ieram fiecare element si sa il salvam in FE
-
     struct RecepieIngredient {
         uint256 recepieId;
         uint256 productTypeId;
@@ -66,6 +63,8 @@ library Types {
         uint256 expirationDate;
         bool isBatch;
         uint256 batchCount;
+        uint256 recepieId;
+        uint256 ingredientsCount;
     }
 }
 

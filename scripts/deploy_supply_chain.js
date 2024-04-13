@@ -17,6 +17,10 @@ async function main() {
     products.getAddress()
   );
   console.log("SupplyChain address:", await supply_chain.getAddress());
+
+  const ObjectTransfers = await ethers.getContractFactory("ObjectTransfers");
+  const object_transfers = await ObjectTransfers.deploy();
+  console.log("ObjectTransfers address:", await object_transfers.getAddress());
 }
 
 main()

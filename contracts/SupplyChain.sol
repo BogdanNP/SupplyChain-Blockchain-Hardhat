@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 
 pragma experimental ABIEncoderV2;
-pragma solidity >=0.7.3;
+pragma solidity >=0.8.0;
 
 import "hardhat/console.sol";
 import "./Products.sol";
@@ -49,27 +49,39 @@ contract SupplyChain {
     //     _sellProduct(buyerId_, barcodeId_, user, currentTime_);
     // }
 
-    // function createSellRequest(
-    //     address buyerId_,
-    //     string memory barcodeId_,
-    //     uint256 currentTime_,
-    //     uint256 quantity
-    // ) public {
-    //     Types.UserDetails memory buyer = users.get(buyerId_);
-    //     Types.UserDetails memory seller = users.get(msg.sender);
-    //     _createSellRequest(barcodeId_, buyer, seller, currentTime_, quantity);
-    // }
+    function createSellRequest(
+        address buyerId_,
+        string memory barcodeId_,
+        uint256 currentTime_,
+        uint256 quantity
+    ) public {
+        Types.UserDetails memory buyer = users.get(buyerId_);
+        Types.UserDetails memory seller = users.get(msg.sender);
+        products._createSellRequest(
+            barcodeId_,
+            buyer,
+            seller,
+            currentTime_,
+            quantity
+        );
+    }
 
-    // function acceptSellRequest(
-    //     address sellerId_,
-    //     string memory barcodeId_,
-    //     uint256 currentTime_,
-    //     bool acceptSell
-    // ) public {
-    //     Types.UserDetails memory buyer = users.get(msg.sender);
-    //     Types.UserDetails memory seller = users.get(sellerId_);
-    //     _acceptSellRequest(barcodeId_, buyer, seller, currentTime_, acceptSell);
-    // }
+    function acceptSellRequest(
+        address sellerId_,
+        string memory barcodeId_,
+        uint256 currentTime_,
+        bool acceptSell
+    ) public {
+        Types.UserDetails memory buyer = users.get(msg.sender);
+        Types.UserDetails memory seller = users.get(sellerId_);
+        products._acceptSellRequest(
+            barcodeId_,
+            buyer,
+            seller,
+            currentTime_,
+            acceptSell
+        );
+    }
 
     function createProduct(uint256 recepieId) public onlyManufacturer {
         Types.UserDetails memory user = users.get(msg.sender);
@@ -83,11 +95,12 @@ contract SupplyChain {
             users.get(msg.sender).id != address(0),
             "User's address is Empty"
         );
-        require(
-            Types.UserRole(users.get(msg.sender).role) ==
-                Types.UserRole.Manufacturer,
-            "Manufacturer role required"
-        );
+        // TODO: restore this
+        // require(
+        //     Types.UserRole(users.get(msg.sender).role) ==
+        //         Types.UserRole.Manufacturer,
+        //     "Manufacturer role required"
+        // );
         _;
     }
 }

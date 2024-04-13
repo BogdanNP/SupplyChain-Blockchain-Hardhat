@@ -28,4 +28,20 @@ interface ProductsInterface {
         uint256 recepieId,
         Types.UserDetails memory user
     ) external;
+
+    function _createSellRequest(
+        string memory barcodeId_,
+        Types.UserDetails memory buyer_,
+        Types.UserDetails memory seller_,
+        uint256 currentTime_,
+        uint256 quantity_
+    ) external;
+
+    function _acceptSellRequest(
+        string memory barcodeId_,
+        Types.UserDetails memory buyer_,
+        Types.UserDetails memory seller_,
+        uint256 currentTime_,
+        bool acceptSell
+    ) external;
 }

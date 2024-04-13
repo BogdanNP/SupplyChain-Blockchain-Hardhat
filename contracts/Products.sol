@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 
 pragma experimental ABIEncoderV2;
-pragma solidity >=0.7.3;
+pragma solidity >=0.8.0;
 
 import "hardhat/console.sol";
 import "./Types.sol";
@@ -9,21 +9,94 @@ import "./Types.sol";
 contract Products {
     constructor() {
         Types.ProductTypeAddDTO[]
-            memory predefinedProductTypes = new Types.ProductTypeAddDTO[](3);
-        predefinedProductTypes[0] = Types.ProductTypeAddDTO("PT0", "D0");
-        predefinedProductTypes[1] = Types.ProductTypeAddDTO("PT1", "D1");
-        predefinedProductTypes[2] = Types.ProductTypeAddDTO("PT2", "D2");
+            memory predefinedProductTypes = new Types.ProductTypeAddDTO[](9);
+        predefinedProductTypes[0] = Types.ProductTypeAddDTO(
+            "Faina",
+            "faina alba din GRAU, obtinuta din macinarea GRAULUI de panificatie (GRAU moale) cultivat in Romania"
+        );
+        predefinedProductTypes[1] = Types.ProductTypeAddDTO(
+            "Drojdie",
+            "drojdie uscata de panificatie, emulsifiant E 491"
+        );
+        predefinedProductTypes[2] = Types.ProductTypeAddDTO(
+            "Sare",
+            "sare iodata"
+        );
+        predefinedProductTypes[3] = Types.ProductTypeAddDTO(
+            "Paine alba",
+            "clasica paine romaneasca fabricata cu maia, care ii confera gustul unic, inconfundabil"
+        );
+        predefinedProductTypes[4] = Types.ProductTypeAddDTO(
+            "Sunca de porc",
+            "produs fiert in membrana artificiala necomestibila"
+        );
+        predefinedProductTypes[5] = Types.ProductTypeAddDTO(
+            "Lapte de vaca",
+            "lapte de vaca. Contine lactoza din lapte"
+        );
+        predefinedProductTypes[6] = Types.ProductTypeAddDTO(
+            "Cascaval din lapte de vaca",
+            ""
+        );
+        predefinedProductTypes[7] = Types.ProductTypeAddDTO(
+            "Sandwich",
+            "paine + alte ingrediente"
+        );
+        predefinedProductTypes[8] = Types.ProductTypeAddDTO(
+            "Pulpa de porc",
+            ""
+        );
         _addProductTypeList(predefinedProductTypes);
-        Types.Recepie[] memory predefinedRecepies = new Types.Recepie[](1);
+        Types.Recepie[] memory predefinedRecepies = new Types.Recepie[](4);
         Types.RecepieIngredient[]
             memory predefinedRecepieIngredients = new Types.RecepieIngredient[](
-                2
+                10
             );
+        // recepie 0: Paine
         predefinedRecepieIngredients[0] = Types.RecepieIngredient(0, 0, 6);
         predefinedRecepieIngredients[1] = Types.RecepieIngredient(0, 1, 6);
+        predefinedRecepieIngredients[2] = Types.RecepieIngredient(0, 2, 6);
+        // recepie 1: Sunca
+        predefinedRecepieIngredients[3] = Types.RecepieIngredient(1, 8, 10);
+        predefinedRecepieIngredients[4] = Types.RecepieIngredient(1, 2, 1);
+        // recepie 2: Cascaval
+        predefinedRecepieIngredients[5] = Types.RecepieIngredient(2, 5, 6);
+        predefinedRecepieIngredients[6] = Types.RecepieIngredient(2, 2, 1);
+        // recepie 3: Sandwich
+        predefinedRecepieIngredients[7] = Types.RecepieIngredient(3, 3, 1);
+        predefinedRecepieIngredients[8] = Types.RecepieIngredient(3, 4, 1);
+        predefinedRecepieIngredients[9] = Types.RecepieIngredient(3, 6, 1);
+        // recepie 0
         recepieIngredients[0][0] = predefinedRecepieIngredients[0];
         recepieIngredients[0][1] = predefinedRecepieIngredients[1];
-        predefinedRecepies[0] = Types.Recepie(0, 2, "PT2", 2, 6);
+        recepieIngredients[0][2] = predefinedRecepieIngredients[2];
+        predefinedRecepies[0] = Types.Recepie(0, 3, "Paine alba", 3, 6);
+        // recepie 1
+        recepieIngredients[1][0] = predefinedRecepieIngredients[3];
+        recepieIngredients[1][1] = predefinedRecepieIngredients[4];
+        predefinedRecepies[1] = Types.Recepie(1, 4, "Sunca de porc", 2, 10);
+        // recepie 2
+        recepieIngredients[2][0] = predefinedRecepieIngredients[5];
+        recepieIngredients[2][1] = predefinedRecepieIngredients[6];
+        predefinedRecepies[2] = Types.Recepie(
+            2,
+            6,
+            "Cascaval din lapte de vaca",
+            2,
+            10
+        );
+        // recepie 3
+        recepieIngredients[3][0] = predefinedRecepieIngredients[7];
+        recepieIngredients[3][1] = predefinedRecepieIngredients[8];
+        recepieIngredients[3][2] = predefinedRecepieIngredients[9];
+        predefinedRecepies[3] = Types.Recepie(
+            3,
+            7,
+            "Sandwich cu sunca si cascaval",
+            3,
+            10
+        );
+
         _addRecepieList(predefinedRecepies);
     }
 
@@ -55,6 +128,15 @@ contract Products {
         string barcodeId,
         uint256 manDateEpoch,
         uint256 expDateEpoch
+    );
+
+    event ComposedProduct(
+        string name,
+        string manufacturerName,
+        string barcodeId,
+        uint256 manDateEpoch,
+        uint256 expDateEpoch,
+        string[] parentProducts
     );
 
     event NewProductType(string name, uint256 id);
@@ -143,14 +225,15 @@ contract Products {
             product_.manufacturingDate,
             product_.expirationDate,
             product_.isBatch,
-            product_.batchCount
+            product_.batchCount,
+            0,
+            0
         );
         products[barcodeId] = product;
         productCounter[myAccount]++;
         userLinkedProducts[myAccount].push(barcodeId);
 
         // console.log(myAccount);
-        // console.log(productCounter[myAccount]);
         emit NewProduct(
             product.name,
             product.manufacturerName,
@@ -231,7 +314,9 @@ contract Products {
             (block.timestamp / 100) * 100,
             (block.timestamp / 100) * 100 + 86400, //TODO: 86400=1day in timestamp
             true,
-            recepie_.quantityResult
+            recepie_.quantityResult,
+            recepie_.id,
+            recepie_.ingredientsCount
         );
 
         // register the product in parentProducts list
@@ -248,20 +333,15 @@ contract Products {
         userLinkedProducts[user.id].push(product_.barcodeId);
 
         // toString(userLinkedProducts[user.id].length),
-        emit NewProduct(
+        emit ComposedProduct(
             product_.name,
             product_.manufacturerName,
             product_.barcodeId,
             product_.manufacturingDate,
-            product_.expirationDate
+            product_.expirationDate,
+            _parentProducts
         );
     }
-
-    // function _trackProduct(
-    //     string memory barcodeId
-    // ) public returns (Types.Product[] memory) {
-    //     products[barcodeId];
-    // }
 
     function _createSellRequest(
         string memory barcodeId_,
@@ -395,18 +475,13 @@ contract Products {
     ) internal pure returns (string memory) {
         uint256[5] memory manufacturerDigits = getLast5Digits(manufacturerCode);
         uint256[5] memory productDigits = getLast5Digits(productCode);
-        uint256[] memory digits;
+        uint256[] memory digits = new uint256[](13);
         // region
         digits[0] = 0;
         digits[1] = 0;
-        for (uint256 i = 0; i < 12; ++i) {
-            if (i < 7) {
-                // manufacturer code
-                digits[i + 2] = manufacturerDigits[i];
-            } else {
-                // product code
-                digits[i + 2] = productDigits[i];
-            }
+        for (uint256 i = 0; i < 5; ++i) {
+            digits[i + 2] = manufacturerDigits[i];
+            digits[i + 7] = productDigits[i];
         }
         // check digit
         digits[12] = checkDigit(digits);
@@ -418,12 +493,10 @@ contract Products {
         uint256 number
     ) internal pure returns (uint256[5] memory) {
         uint256 val = number;
-        uint256 index = 4;
         uint256[5] memory digits;
-        while (index >= 0) {
-            digits[index] = val % 10;
+        for (uint256 index = 5; index > 0; index--) {
+            digits[index - 1] = val % 10;
             val /= 10;
-            index--;
         }
         return digits;
     }
