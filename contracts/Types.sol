@@ -75,7 +75,13 @@ library Types {
     // we need 2 counters because a user can have bought
     // stock items or created stock items, so for productCreation
     // we need a separate counter
+    // QUESTION: should a stock item be unique?
+    // what if i buy 3 items and then buy other 3 with the same barcodeId?
+    // ANSWER: i think that in that case we can just increase the quantity,
+    // so each stockItem is unique
+    // LETS'S IMPLEMENT THIS!!!
     struct StockItem {
+        uint256 id;
         string barcodeId;
         uint256 quantity;
     }
