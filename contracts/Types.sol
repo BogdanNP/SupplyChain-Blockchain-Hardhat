@@ -53,6 +53,7 @@ library Types {
         uint256 batchCount;
     }
 
+    // each product should be unique
     struct Product {
         string name;
         uint256 productTypeId;
@@ -70,8 +71,11 @@ library Types {
     }
 
     // we create this
-    struct Batch {
-        Product product;
+    // userLinkedProducts: user id -> list of stock item
+    // we need 2 counters because a user can have bought
+    // stock items or created stock items, so for productCreation
+    // we need a separate counter
+    struct StockItem {
         string barcodeId;
         uint256 quantity;
     }
