@@ -61,10 +61,34 @@ library Types {
         address manufacturerId;
         uint256 manufacturingDate;
         uint256 expirationDate;
+        // we remove this
         bool isBatch;
+        // we remove this
         uint256 batchCount;
         uint256 recepieId;
         uint256 ingredientsCount;
+    }
+
+    // we create this
+    struct Batch {
+        Product product;
+        string barcodeId;
+        uint256 quantity;
+    }
+
+    enum ObjectStatus {
+        Pending,
+        Accepted,
+        Refused
+    }
+
+    struct Transfer {
+        uint256 id;
+        address sender;
+        address receiver;
+        string barcodeId;
+        uint256 quantity;
+        ObjectStatus status;
     }
 }
 

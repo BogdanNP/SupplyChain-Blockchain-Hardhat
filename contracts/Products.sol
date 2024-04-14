@@ -343,75 +343,107 @@ contract Products {
         );
     }
 
-    function _createSellRequest(
-        string memory barcodeId_,
-        Types.UserDetails memory buyer_,
-        Types.UserDetails memory seller_,
-        uint256 currentTime_,
-        uint256 quantity_
-    ) public {
-        Types.Product memory product_ = products[barcodeId_];
-        require(product_.batchCount > quantity_, "Unavailable quantity");
-        product_.batchCount = quantity_;
-        // store sell request
-        waitingProducts[buyer_.id][product_.barcodeId] = product_;
-        emit ProductOwnershipTransferRequest(
-            product_.name,
-            product_.manufacturerName,
-            product_.barcodeId,
-            buyer_.name,
-            buyer_.email,
-            seller_.name,
-            seller_.email,
-            currentTime_
+    // Object Transfer
+
+    mapping(uint256 => Types.Transfer) public transfers;
+    uint256 public transferCount;
+    mapping(address => uint256[]) public accountTransfers;
+    mapping(address => uint256) public accountTransferCount;
+
+    event ObjectTransferred(
+        uint transferId,
+        address sender,
+        address receiver,
+        string barcodeId,
+        uint256 quantity,
+        Types.ObjectStatus status
+    );
+
+    function requestTransfer(
+        string memory _barcodeId,
+        uint256 _quantity,
+        address _receiver
+    ) external {
+        Types.Transfer memory newTransfer = Types.Transfer({
+            id: transferCount,
+            sender: msg.sender,
+            receiver: _receiver,
+            barcodeId: _barcodeId,
+            quantity: _quantity,
+            status: Types.ObjectStatus.Pending
+        });
+
+        transfers[transferCount] = (newTransfer);
+        accountTransfers[_receiver].push(transferCount);
+        accountTransferCount[_receiver]++;
+        transferCount++;
+
+        emit ObjectTransferred(
+            transferCount - 1,
+            msg.sender,
+            _receiver,
+            _barcodeId,
+            _quantity,
+            Types.ObjectStatus.Pending
         );
     }
 
-    function _acceptSellRequest(
-        string memory barcodeId_,
-        Types.UserDetails memory buyer_,
-        Types.UserDetails memory seller_,
-        uint256 currentTime_,
-        bool acceptSell
-    ) public {
-        Types.Product memory product_ = products[barcodeId_];
-        delete waitingProducts[buyer_.id][product_.barcodeId];
+    function acceptTransfer(uint _transferId) external {
+        require(
+            transfers[_transferId].receiver == msg.sender,
+            "Only the intended receiver can accept the transfer"
+        );
+        require(
+            transfers[_transferId].status == Types.ObjectStatus.Pending,
+            "Transfer status must be Pending"
+        );
 
-        if (acceptSell) {
-            transferOwnership(seller_.id, buyer_.id, barcodeId_);
-        }
-        emit ProductOwnershipTransferResponse(
-            product_.name,
-            product_.manufacturerName,
-            product_.barcodeId,
-            buyer_.name,
-            buyer_.email,
-            seller_.name,
-            seller_.email,
-            currentTime_,
-            acceptSell ? "ACCEPTED" : "REJECTED"
+        transferOwnership(
+            transfers[_transferId].sender,
+            transfers[_transferId].receiver,
+            transfers[_transferId].barcodeId
+            //todo: add quantity
+        );
+
+        transfers[_transferId].status = Types.ObjectStatus.Accepted;
+
+        emit ObjectTransferred(
+            _transferId,
+            transfers[_transferId].sender,
+            msg.sender,
+            transfers[_transferId].barcodeId,
+            transfers[_transferId].quantity,
+            Types.ObjectStatus.Accepted
         );
     }
 
-    // function _sellProduct(
-    //     address buyerId_,
-    //     string memory barcodeId_,
-    //     Types.UserDetails memory buyer_,
-    //     uint256 currentTime_
-    // ) internal {
-    //     Types.Product memory product_ = products[barcodeId_];
-    //     //creaza cerere
-    //     //cumparatorul confirma/refuza cererea
-    //     transferOwnership(msg.sender, buyerId_, barcodeId_);
-    //     // emit ProductOwnershipTransfer(
-    //     //     product_.name,
-    //     //     product_.manufacturerName,
-    //     //     product_.barcodeId,
-    //     //     buyer_.name,
-    //     //     buyer_.email,
-    //     //     currentTime_
-    //     // );
-    // }
+    function refuseTransfer(uint _transferId) external {
+        require(
+            transfers[_transferId].receiver == msg.sender,
+            "Only the intended receiver can refuse the transfer"
+        );
+        require(
+            transfers[_transferId].status == Types.ObjectStatus.Pending,
+            "Transfer status must be Pending"
+        );
+
+        transfers[_transferId].status = Types.ObjectStatus.Refused;
+
+        emit ObjectTransferred(
+            _transferId,
+            transfers[_transferId].sender,
+            msg.sender,
+            transfers[_transferId].barcodeId,
+            transfers[_transferId].quantity,
+            Types.ObjectStatus.Refused
+        );
+    }
+
+    function getTransferStatus(
+        uint _transferId
+    ) external view returns (Types.ObjectStatus) {
+        return transfers[_transferId].status;
+    }
 
     // Modifiers
 
@@ -437,7 +469,10 @@ contract Products {
         address sellerId_,
         address buyerId_,
         string memory barcodeId_
-    ) public {
+    ) internal {
+        console.log(sellerId_);
+        console.log(buyerId_);
+        console.log(barcodeId_);
         string[] memory sellerProducts_ = userLinkedProducts[sellerId_];
         uint256 matchIndex_ = (sellerProducts_.length + 1);
         for (uint256 i = 0; i < sellerProducts_.length; ++i) {
@@ -448,16 +483,41 @@ contract Products {
         }
 
         require(matchIndex_ < sellerProducts_.length, "Product not found");
+        // TODO: only modify quantity
 
-        if (sellerProducts_.length == 1) {
-            delete userLinkedProducts[sellerId_];
-        } else {
-            userLinkedProducts[sellerId_][matchIndex_] = userLinkedProducts[
-                sellerId_
-            ][sellerProducts_.length - 1];
-            delete userLinkedProducts[sellerId_][sellerProducts_.length - 1];
-            userLinkedProducts[sellerId_].pop();
-        }
+        // if (sellerProducts_.length == 1) {
+        //     delete userLinkedProducts[sellerId_];
+        // } else {
+        //     userLinkedProducts[sellerId_][matchIndex_] = userLinkedProducts[
+        //         sellerId_
+        //     ][sellerProducts_.length - 1];
+        //     delete userLinkedProducts[sellerId_][sellerProducts_.length - 1];
+        //     userLinkedProducts[sellerId_].pop();
+        // }
+
+        // TODO: maybe create a new list for bought products
+        // ISSUE: increase productCounter and lose the index
+        // SOLUTION: keep 2 indexes, one for counting all products of
+        // a user, one for counting the products created and which is
+        // used for generating the barcodeId;
+
+        // ISSUE: when having quantity, think about multiple
+        // users having the same product with the same barcodeId
+        // in that case batchCount is useless
+        // userLinkedProducts -> barcodeId + quantity
+        // (NEW ISSUE: what about serialNumber, just add it in userLinkedProducts)
+        // this means changing the whole structure of Product and
+        // the creation of a new object? BatchProduct:
+        // quantity + barcodeId
+        // + adding serialNumber to each Product object
+        // how does this affect recepies?
+        // how to change things with current data structure?
+        // because barcodeId is the identifier for each product,
+        // it is unique per product creation, and we save the product
+        // by mapping barcodeId to the product, we can make the changes
+        // just if we make userLinkedProducts a list of products, not
+        // a list of barcodeId, but i think this would be too much data
+        // to store :/
         userLinkedProducts[buyerId_].push(barcodeId_);
     }
 
