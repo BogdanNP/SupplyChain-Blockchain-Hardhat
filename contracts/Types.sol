@@ -81,7 +81,6 @@ library Types {
     // so each stockItem is unique
     // LETS'S IMPLEMENT THIS!!!
     struct StockItem {
-        uint256 id;
         string barcodeId;
         uint256 quantity;
     }
