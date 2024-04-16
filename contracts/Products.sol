@@ -105,11 +105,12 @@ contract Products {
     uint256 public productTypeCounter = 0;
     // barcodeId => product
     mapping(string => Types.Product) public products;
-    // address => list of product barcodeIds
-    mapping(address => string[]) public userLinkedProducts;
+    // address => list of stock item (barcodeId + quantity) for each user
+    mapping(address => Types.StockItem[]) public userLinkedStockItems;
+    // count product creation // only for manufacturers
     mapping(address => uint256) public productCounter;
-    mapping(address => mapping(string => Types.Product))
-        internal waitingProducts;
+    // count product creation, transfer // used by all users
+    mapping(address => uint256) public stockItemCounter;
 
     mapping(uint256 => mapping(uint256 => Types.RecepieIngredient))
         public recepieIngredients;
@@ -130,6 +131,7 @@ contract Products {
         uint256 expDateEpoch
     );
 
+    // it's so strange that events can send lists, but functions can't ~.~
     event ComposedProduct(
         string name,
         string manufacturerName,
@@ -141,29 +143,6 @@ contract Products {
 
     event NewProductType(string name, uint256 id);
     event NewRecepie(uint256 id, uint256 resultTypeId, string resultTypeName);
-
-    event ProductOwnershipTransferRequest(
-        string name,
-        string manufacurerName,
-        string barcodeId,
-        string buyerName,
-        string buyerEmail,
-        string sellerName,
-        string sellerEmail,
-        uint256 requestTime
-    );
-
-    event ProductOwnershipTransferResponse(
-        string name,
-        string manufacurerName,
-        string barcodeId,
-        string buyerName,
-        string buyerEmail,
-        string sellerName,
-        string sellerEmail,
-        uint256 responseTime,
-        string status
-    );
 
     // Contract Methods
 
@@ -212,6 +191,7 @@ contract Products {
         //     product_.manufacturerId == myAccount,
         //     "Only manufacturer can add products"
         // );
+        // TODO: Add manufacturer id + region association
         string memory barcodeId = generateBarcode(
             99,
             productCounter[myAccount]
@@ -224,14 +204,19 @@ contract Products {
             myAccount,
             product_.manufacturingDate,
             product_.expirationDate,
-            product_.isBatch,
-            product_.batchCount,
             0,
             0
         );
+
         products[barcodeId] = product;
         productCounter[myAccount]++;
-        userLinkedProducts[myAccount].push(barcodeId);
+
+        Types.StockItem memory stockItem = Types.StockItem(
+            barcodeId,
+            product_.batchCount
+        );
+        userLinkedStockItems[myAccount].push(stockItem);
+        stockItemCounter[myAccount]++;
 
         // console.log(myAccount);
         emit NewProduct(
@@ -253,7 +238,7 @@ contract Products {
         );
         uint256 ingredientsCount = 0;
         // iterate through required products by the recepie
-        for (uint j = 0; j < userLinkedProducts[user.id].length; ++j) {
+        for (uint j = 0; j < userLinkedStockItems[user.id].length; ++j) {
             if (recepie_.ingredientsCount == ingredientsCount) {
                 break;
             }
@@ -262,9 +247,10 @@ contract Products {
                 // check if user product is in the recepie
                 if (
                     (recepieIngredients[recepie_.id][i].productQuantity <=
-                        products[userLinkedProducts[user.id][j]].batchCount) &&
+                        userLinkedStockItems[user.id][j].quantity) &&
                     (recepieIngredients[recepie_.id][i].productTypeId ==
-                        products[userLinkedProducts[user.id][j]].productTypeId)
+                        products[userLinkedStockItems[user.id][j].barcodeId]
+                            .productTypeId)
                 ) {
                     // check if the quantity is enough for the recepie
                     // require(
@@ -273,23 +259,22 @@ contract Products {
                     //     "Recepie requires user to have more quantity of some product"
                     // );
                     // save the barcodeId of the used product
-                    _parentProducts[ingredientsCount] = products[
-                        userLinkedProducts[user.id][j]
-                    ].barcodeId;
+                    _parentProducts[ingredientsCount] = userLinkedStockItems[
+                        user.id
+                    ][j].barcodeId;
 
                     // count ingredient used
                     ingredientsCount++;
 
-                    // update the quantity of used products
-                    products[userLinkedProducts[user.id][j]]
-                        .batchCount -= recepieIngredients[recepie_.id][i]
+                    // update the quantity of used stock item
+                    userLinkedStockItems[user.id][j]
+                        .quantity -= recepieIngredients[recepie_.id][i]
                         .productQuantity;
 
                     // check if the quantity is 0 and delete the products
-                    if (
-                        products[userLinkedProducts[user.id][j]].batchCount == 0
-                    ) {
-                        // TODO: check this
+                    if (userLinkedStockItems[user.id][j].quantity == 0) {
+                        // NEED TO THINK THIS FOR userLinkedStockItems
+                        // OLD IMPLEMENTAION TODO: check this
                         // maybe dont delete this...
                         // delete products[userLinkedProducts[user.id][j]];
                         // delete userLinkedProducts[user.id][j];
@@ -313,8 +298,6 @@ contract Products {
             user.id,
             (block.timestamp / 100) * 100,
             (block.timestamp / 100) * 100 + 86400, //TODO: 86400=1day in timestamp
-            true,
-            recepie_.quantityResult,
             recepie_.id,
             recepie_.ingredientsCount
         );
@@ -329,8 +312,16 @@ contract Products {
         // increase the productCounter
         productCounter[user.id]++;
 
-        // link the product to the user
-        userLinkedProducts[user.id].push(product_.barcodeId);
+        // create stock item
+        Types.StockItem memory stockItem = Types.StockItem(
+            product_.barcodeId,
+            recepie_.quantityResult
+        );
+        // link the stock item to the user
+        userLinkedStockItems[user.id].push(stockItem);
+
+        // increase the stockItemCounter
+        stockItemCounter[user.id]++;
 
         // toString(userLinkedProducts[user.id].length),
         emit ComposedProduct(
@@ -401,8 +392,8 @@ contract Products {
         transferOwnership(
             transfers[_transferId].sender,
             transfers[_transferId].receiver,
-            transfers[_transferId].barcodeId
-            //todo: add quantity
+            transfers[_transferId].barcodeId,
+            transfers[_transferId].quantity
         );
 
         transfers[_transferId].status = Types.ObjectStatus.Accepted;
@@ -468,21 +459,29 @@ contract Products {
     function transferOwnership(
         address sellerId_,
         address buyerId_,
-        string memory barcodeId_
+        string memory barcodeId_,
+        uint256 quantity_
     ) internal {
         console.log(sellerId_);
         console.log(buyerId_);
         console.log(barcodeId_);
-        string[] memory sellerProducts_ = userLinkedProducts[sellerId_];
+        Types.StockItem[] memory sellerProducts_ = userLinkedStockItems[
+            sellerId_
+        ];
         uint256 matchIndex_ = (sellerProducts_.length + 1);
         for (uint256 i = 0; i < sellerProducts_.length; ++i) {
-            if (compareStrings(sellerProducts_[i], barcodeId_)) {
+            if (compareStrings(sellerProducts_[i].barcodeId, barcodeId_)) {
                 matchIndex_ = i;
                 break;
             }
         }
 
         require(matchIndex_ < sellerProducts_.length, "Product not found");
+        require(
+            quantity_ <= userLinkedStockItems[sellerId_][matchIndex_].quantity,
+            "Seller does not have the required quantity anymore"
+        );
+        userLinkedStockItems[sellerId_][matchIndex_].quantity -= quantity_;
         // TODO: only modify quantity
 
         // if (sellerProducts_.length == 1) {
@@ -518,7 +517,32 @@ contract Products {
         // just if we make userLinkedProducts a list of products, not
         // a list of barcodeId, but i think this would be too much data
         // to store :/
-        userLinkedProducts[buyerId_].push(barcodeId_);
+        // TODO: modify in order to accept quantity
+
+        bool buyerAlreadyHasStockItem = false;
+        // check if buyer has this type of stock item
+        for (uint256 i = 0; i < userLinkedStockItems[buyerId_].length; ++i) {
+            if (
+                compareStrings(
+                    userLinkedStockItems[buyerId_][i].barcodeId,
+                    barcodeId_
+                )
+            ) {
+                // only increase the quantity if we find the product
+                userLinkedStockItems[buyerId_][i].quantity += quantity_;
+                buyerAlreadyHasStockItem = true;
+                break;
+            }
+        }
+        // if it is the first time, then we can add the stock item to the list
+        if (!buyerAlreadyHasStockItem) {
+            Types.StockItem memory transferredItem = Types.StockItem(
+                barcodeId_,
+                quantity_
+            );
+            userLinkedStockItems[buyerId_].push(transferredItem);
+            stockItemCounter[buyerId_]++;
+        }
     }
 
     function compareStrings(

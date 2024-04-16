@@ -3,16 +3,16 @@
 Key Functionalities:
 
 - [OK] Add User
-- Register / Login User
-- Add ProductType / Create them at the project init
-- Add Recepie / Create them at the project init
+- [TBD] Register / Login User
+- [REFINE] Add ProductType / Create them at the project init
+- [REFINE] Add Recepie / Create them at the project init
 - Add Product
-  - Base Product
-  - Transform other products to create a new one
-- Sell Product
-  - Create Sell Request
-  - Accept / Decline
-  - Transfer Object
+  - [REFINE] Base Product
+  - [OK] Transform other products to create a new one
+- [OK] Sell Product
+  - [OK] Create Sell Request
+  - [OK] Accept / Decline
+  - [OK] Transfer Object
 
 Steps:
 
@@ -33,10 +33,10 @@ Project Structure:
 
 - `Admin`:
   - [OK] adds users
-  - confirms recepies
+  - [TBD] confirms recepies
 - `Base Manufacturer`:
-  - adds products
-  - sells products
+  - [REFINE] adds products
+  - [OK] sells products
 - `Manufacturer`:
   - adds recepies
     - waits for the recepies to by confirmed by the `Admin`

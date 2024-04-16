@@ -50,6 +50,7 @@ library Types {
         uint256 manufacturingDate;
         uint256 expirationDate;
         bool isBatch;
+        // maybe keep this? IDK
         uint256 batchCount;
     }
 
@@ -62,10 +63,6 @@ library Types {
         address manufacturerId;
         uint256 manufacturingDate;
         uint256 expirationDate;
-        // we remove this
-        bool isBatch;
-        // we remove this
-        uint256 batchCount;
         uint256 recepieId;
         uint256 ingredientsCount;
     }
