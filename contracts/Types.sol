@@ -16,8 +16,11 @@ library Types {
         address id;
         string name;
         string email;
-        // TODO: add this
-        // string cf;
+    }
+
+    struct ManufacturerDetails {
+        uint256 code;
+        uint256 region;
     }
 
     struct ProductTypeAddDTO {

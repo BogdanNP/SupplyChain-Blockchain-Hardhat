@@ -35,7 +35,7 @@ Project Structure:
   - [OK] adds users
   - [TBD] confirms recepies
 - `Base Manufacturer`:
-  - [REFINE] adds products
+  - [OK] adds products
   - [OK] sells products
 - `Manufacturer`:
   - adds recepies

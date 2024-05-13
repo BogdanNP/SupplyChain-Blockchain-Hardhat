@@ -23,22 +23,27 @@ contract Users {
         add(admin_);
     }
 
-    int256 public usersCount;
+    uint256 public usersCount;
+    uint256 public manufacutersCount;
+    uint256 public suppliersCount;
+    uint256 public vendorsCount;
+    uint256 public customersCount;
     mapping(address => Types.UserDetails) public users;
-    mapping(address => Types.UserDetails[]) internal manufacturersList;
-    mapping(address => Types.UserDetails[]) internal suppliersList;
-    mapping(address => Types.UserDetails[]) internal vendorsList;
-    mapping(address => Types.UserDetails[]) internal customersList;
+    mapping(uint256 => address) internal manufacturersList;
+    mapping(uint256 => address) internal suppliersList;
+    mapping(uint256 => address) internal vendorsList;
+    mapping(uint256 => address) internal customersList;
+    mapping(string => address) public usersByCIF;
+    mapping(uint256 => address) public usersByIndex;
 
     event NewUser(address id, string name, string email, Types.UserRole role);
 
     function add(Types.UserDetails memory user) internal {
         require(user.id != address(0));
         require(!has(user.role, user.id), "Same user with same role exists");
-        console.log("add: HERE");
+        usersByIndex[usersCount] = user.id;
         usersCount++;
         users[user.id] = user;
-        console.logInt(usersCount);
         emit NewUser(user.id, user.name, user.email, user.role);
     }
 
@@ -48,6 +53,23 @@ contract Users {
     ) internal view returns (bool) {
         require(account != address(0));
         return (users[account].id != address(0) && users[account].role == role);
+    }
+
+    function _linkByCIF(address id, string memory cif) public {
+        usersByCIF[cif] = id;
+    }
+
+    function _register(
+        Types.UserDetails memory user,
+        address myAccount
+    ) public {
+        require(myAccount != address(0), "Your address is Empty");
+        require(user.id != address(0), "User's address is Empty");
+        require(
+            myAccount == user.id,
+            "User's address different from account address"
+        );
+        _addUserByRole(user);
     }
 
     function _addUser(Types.UserDetails memory user, address myAccount) public {
@@ -62,18 +84,27 @@ contract Users {
         );
         if (get(myAccount).role != Types.UserRole.Admin) {
             revert("Only admin can add other users");
-        } else if (user.role == Types.UserRole.Manufacturer) {
+        }
+        _addUserByRole(user);
+    }
+
+    function _addUserByRole(Types.UserDetails memory user) internal {
+        if (user.role == Types.UserRole.Manufacturer) {
             console.log("_addUser: Manufacturer");
-            manufacturersList[myAccount].push(user);
+            manufacturersList[manufacutersCount] = user.id;
+            manufacutersCount++;
             add(user);
         } else if (user.role == Types.UserRole.Supplier) {
-            suppliersList[myAccount].push(user);
+            suppliersList[suppliersCount] = user.id;
+            suppliersCount++;
             add(user);
         } else if (user.role == Types.UserRole.Vendor) {
-            vendorsList[myAccount].push(user);
+            vendorsList[vendorsCount] = user.id;
+            vendorsCount++;
             add(user);
         } else if (user.role == Types.UserRole.Customer) {
-            customersList[myAccount].push(user);
+            customersList[customersCount] = user.id;
+            customersCount++;
             add(user);
         } else {
             revert("User's type is invalid");

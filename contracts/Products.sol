@@ -194,6 +194,7 @@ contract Products {
         // TODO: Add manufacturer id + region association
         string memory barcodeId = generateBarcode(
             99,
+            99,
             productCounter[myAccount]
         );
         Types.Product memory product = Types.Product(
@@ -228,6 +229,8 @@ contract Products {
         );
     }
 
+    // think about typeId -> list of user linked stock items
+
     function _createProduct(
         uint256 recepieId,
         Types.UserDetails memory user
@@ -250,7 +253,8 @@ contract Products {
                         userLinkedStockItems[user.id][j].quantity) &&
                     (recepieIngredients[recepie_.id][i].productTypeId ==
                         products[userLinkedStockItems[user.id][j].barcodeId]
-                            .productTypeId)
+                            .productTypeId) &&
+                    (bytes(products[_parentProducts[i]].barcodeId).length == 0)
                 ) {
                     // check if the quantity is enough for the recepie
                     // require(
@@ -259,9 +263,8 @@ contract Products {
                     //     "Recepie requires user to have more quantity of some product"
                     // );
                     // save the barcodeId of the used product
-                    _parentProducts[ingredientsCount] = userLinkedStockItems[
-                        user.id
-                    ][j].barcodeId;
+                    _parentProducts[i] = userLinkedStockItems[user.id][j]
+                        .barcodeId;
 
                     // count ingredient used
                     ingredientsCount++;
@@ -286,14 +289,14 @@ contract Products {
         // check if all ingredients were found and used
         require(
             ingredientsCount == recepie_.ingredientsCount,
-            "There are some products missing"
+            "There are not enough ingredients for this recepie, please check your stock"
         );
 
         // create the new product
         Types.Product memory product_ = Types.Product(
             recepie_.resultTypeName,
             recepie_.resultTypeId,
-            generateBarcode(99, productCounter[user.id]), //TODO: add manufacturer code
+            generateBarcode(13, 99, productCounter[user.id]), //TODO: add manufacturer code
             user.name,
             user.id,
             (block.timestamp / 100) * 100,
@@ -554,6 +557,7 @@ contract Products {
     }
 
     function generateBarcode(
+        uint256 regionCode,
         uint256 manufacturerCode,
         uint256 productCode
     ) internal pure returns (string memory) {
@@ -561,8 +565,8 @@ contract Products {
         uint256[5] memory productDigits = getLast5Digits(productCode);
         uint256[] memory digits = new uint256[](13);
         // region
-        digits[0] = 0;
-        digits[1] = 0;
+        digits[0] = regionCode % 10;
+        digits[1] = (regionCode / 10) % 10;
         for (uint256 i = 0; i < 5; ++i) {
             digits[i + 2] = manufacturerDigits[i];
             digits[i + 7] = productDigits[i];
