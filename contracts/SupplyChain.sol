@@ -31,7 +31,12 @@ contract SupplyChain {
     function addProduct(
         Types.ProductAddDTO memory product_
     ) public onlyManufacturer {
-        products._addProduct(product_, users.get(msg.sender).name, msg.sender);
+        products._addProduct(
+            product_,
+            users.getManufacturerDetails(msg.sender),
+            users.get(msg.sender).name,
+            msg.sender
+        );
     }
 
     function addProductType(
@@ -85,7 +90,11 @@ contract SupplyChain {
 
     function createProduct(uint256 recepieId) public onlyManufacturer {
         Types.UserDetails memory user = users.get(msg.sender);
-        products._createProduct(recepieId, user);
+        products._createProduct(
+            recepieId,
+            users.getManufacturerDetails(msg.sender),
+            user
+        );
     }
 
     // Modifiers

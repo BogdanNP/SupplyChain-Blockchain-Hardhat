@@ -20,12 +20,14 @@ interface ProductsInterface {
 
     function _addProduct(
         Types.ProductAddDTO memory product_,
+        Types.ManufacturerDetails memory manufacturerDetails,
         string memory manufacturerName,
         address myAccount
     ) external;
 
     function _createProduct(
         uint256 recepieId,
+        Types.ManufacturerDetails memory manufacturerDetails,
         Types.UserDetails memory user
     ) external;
 

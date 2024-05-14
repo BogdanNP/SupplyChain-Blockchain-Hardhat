@@ -184,6 +184,7 @@ contract Products {
 
     function _addProduct(
         Types.ProductAddDTO memory product_,
+        Types.ManufacturerDetails memory manufacturerDetails,
         string memory manufacturerName,
         address myAccount
     ) public {
@@ -193,8 +194,8 @@ contract Products {
         // );
         // TODO: Add manufacturer id + region association
         string memory barcodeId = generateBarcode(
-            99,
-            99,
+            manufacturerDetails.region,
+            manufacturerDetails.code,
             productCounter[myAccount]
         );
         Types.Product memory product = Types.Product(
@@ -233,6 +234,7 @@ contract Products {
 
     function _createProduct(
         uint256 recepieId,
+        Types.ManufacturerDetails memory manufacturerDetails,
         Types.UserDetails memory user
     ) public {
         Types.Recepie memory recepie_ = recepies[recepieId];
@@ -296,7 +298,11 @@ contract Products {
         Types.Product memory product_ = Types.Product(
             recepie_.resultTypeName,
             recepie_.resultTypeId,
-            generateBarcode(13, 99, productCounter[user.id]), //TODO: add manufacturer code
+            generateBarcode(
+                manufacturerDetails.region,
+                manufacturerDetails.code,
+                productCounter[user.id]
+            ), //TODO: add manufacturer code
             user.name,
             user.id,
             (block.timestamp / 100) * 100,

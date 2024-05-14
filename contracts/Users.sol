@@ -35,6 +35,7 @@ contract Users {
     mapping(uint256 => address) internal customersList;
     mapping(string => address) public usersByCIF;
     mapping(uint256 => address) public usersByIndex;
+    mapping(address => Types.ManufacturerDetails) public manufacturerDetailList;
 
     event NewUser(address id, string name, string email, Types.UserRole role);
 
@@ -91,6 +92,10 @@ contract Users {
     function _addUserByRole(Types.UserDetails memory user) internal {
         if (user.role == Types.UserRole.Manufacturer) {
             console.log("_addUser: Manufacturer");
+            manufacturerDetailList[user.id] = Types.ManufacturerDetails(
+                manufacutersCount,
+                9
+            );
             manufacturersList[manufacutersCount] = user.id;
             manufacutersCount++;
             add(user);
@@ -117,6 +122,14 @@ contract Users {
         require(account != address(0), "Addres is empty");
         require(users[account].id != address(0), "User does not exist");
         return users[account];
+    }
+
+    function getManufacturerDetails(
+        address account
+    ) public view returns (Types.ManufacturerDetails memory) {
+        require(account != address(0), "Addres is empty");
+        require(users[account].id != address(0), "User does not exist");
+        return manufacturerDetailList[account];
     }
 
     // Metamask error workaround

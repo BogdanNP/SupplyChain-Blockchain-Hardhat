@@ -14,4 +14,8 @@ interface UsersInterface {
     function get(
         address account
     ) external view returns (Types.UserDetails memory);
+
+    function getManufacturerDetails(
+        address account
+    ) external view returns (Types.ManufacturerDetails memory);
 }
