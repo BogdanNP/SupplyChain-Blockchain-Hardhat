@@ -250,6 +250,9 @@ contract Products {
             for (uint i = 0; i < recepie_.ingredientsCount; ++i) {
                 // iterate through user linked products
                 // check if user product is in the recepie
+                // check quantity
+                // check product type
+                // check if product was not already used
                 if (
                     (recepieIngredients[recepie_.id][i].productQuantity <=
                         userLinkedStockItems[user.id][j].quantity) &&
@@ -302,7 +305,7 @@ contract Products {
                 manufacturerDetails.region,
                 manufacturerDetails.code,
                 productCounter[user.id]
-            ), //TODO: add manufacturer code
+            ),
             user.name,
             user.id,
             (block.timestamp / 100) * 100,
@@ -607,9 +610,7 @@ contract Products {
                 oddSum += digits[i];
             }
         }
-        uint256 evenSum3 = evenSum * 3;
-        uint256 total = evenSum3 + oddSum;
-        uint256 remainder = total % 10;
+        uint256 remainder = (evenSum * 3 + oddSum) % 10;
         if (remainder == 0) {
             return remainder;
         }

@@ -92,9 +92,10 @@ contract Users {
     function _addUserByRole(Types.UserDetails memory user) internal {
         if (user.role == Types.UserRole.Manufacturer) {
             console.log("_addUser: Manufacturer");
+            // TODO: create a function for just adding man details
             manufacturerDetailList[user.id] = Types.ManufacturerDetails(
                 manufacutersCount,
-                9
+                usersCount
             );
             manufacturersList[manufacutersCount] = user.id;
             manufacutersCount++;
