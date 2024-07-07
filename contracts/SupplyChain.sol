@@ -45,15 +45,6 @@ contract SupplyChain {
         products._addProductType(productType_);
     }
 
-    // function sellProduct(
-    //     address buyerId_,
-    //     string memory barcodeId_,
-    //     uint256 currentTime_
-    // ) public {
-    //     Types.UserDetails memory user = users[buyerId_];
-    //     _sellProduct(buyerId_, barcodeId_, user, currentTime_);
-    // }
-
     function createSellRequest(
         address buyerId_,
         string memory barcodeId_,
@@ -97,19 +88,38 @@ contract SupplyChain {
         );
     }
 
+    function blockProduct(
+        string calldata barcodeId,
+        bool status
+    ) public onlyAdmin {
+        products.blockProduct(barcodeId, status);
+    }
+
     // Modifiers
+    modifier onlyAdmin() {
+        require(msg.sender != address(0), "Sender's address is Empty");
+        require(
+            users.get(msg.sender).id != address(0),
+            "User's address is Empty"
+        );
+        require(
+            Types.UserRole(users.get(msg.sender).role) == Types.UserRole.Admin,
+            "Admin role required"
+        );
+        _;
+    }
+
     modifier onlyManufacturer() {
         require(msg.sender != address(0), "Sender's address is Empty");
         require(
             users.get(msg.sender).id != address(0),
             "User's address is Empty"
         );
-        // TODO: restore this
-        // require(
-        //     Types.UserRole(users.get(msg.sender).role) ==
-        //         Types.UserRole.Manufacturer,
-        //     "Manufacturer role required"
-        // );
+        require(
+            Types.UserRole(users.get(msg.sender).role) ==
+                Types.UserRole.Manufacturer,
+            "Manufacturer role required"
+        );
         _;
     }
 }

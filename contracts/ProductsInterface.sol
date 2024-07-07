@@ -46,4 +46,6 @@ interface ProductsInterface {
         uint256 currentTime_,
         bool acceptSell
     ) external;
+
+    function blockProduct(string calldata barcodeId, bool status) external;
 }

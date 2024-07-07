@@ -9,48 +9,91 @@ import "./Types.sol";
 contract Products {
     constructor() {
         Types.ProductTypeAddDTO[]
-            memory predefinedProductTypes = new Types.ProductTypeAddDTO[](9);
+            memory predefinedProductTypes = new Types.ProductTypeAddDTO[](20);
         predefinedProductTypes[0] = Types.ProductTypeAddDTO(
-            "Faina",
-            "faina alba din GRAU, obtinuta din macinarea GRAULUI de panificatie (GRAU moale) cultivat in Romania"
+            "Faina alba",
+            "Faina alba din grau"
         );
         predefinedProductTypes[1] = Types.ProductTypeAddDTO(
             "Drojdie",
-            "drojdie uscata de panificatie, emulsifiant E 491"
+            "Drojdie uscata de panificatie"
         );
         predefinedProductTypes[2] = Types.ProductTypeAddDTO(
             "Sare",
-            "sare iodata"
+            "Sare iodata"
         );
         predefinedProductTypes[3] = Types.ProductTypeAddDTO(
             "Paine alba",
-            "clasica paine romaneasca fabricata cu maia, care ii confera gustul unic, inconfundabil"
+            "Paine alba clasica formata din drojdie, faina si sare"
         );
         predefinedProductTypes[4] = Types.ProductTypeAddDTO(
             "Sunca de porc",
-            "produs fiert in membrana artificiala necomestibila"
+            "Produs fiert in membrana artificiala necomestibila"
         );
         predefinedProductTypes[5] = Types.ProductTypeAddDTO(
             "Lapte de vaca",
-            "lapte de vaca. Contine lactoza din lapte"
+            "Lapte de vaca cu 3.5% grasime"
         );
         predefinedProductTypes[6] = Types.ProductTypeAddDTO(
-            "Cascaval din lapte de vaca",
-            ""
+            "Cascaval",
+            "Cascaval din lapte de vaca"
         );
         predefinedProductTypes[7] = Types.ProductTypeAddDTO(
             "Sandwich",
-            "paine + alte ingrediente"
+            "Sandwich cu sunca si cascaval"
         );
         predefinedProductTypes[8] = Types.ProductTypeAddDTO(
             "Pulpa de porc",
-            ""
+            "Produs si ambalat in Romania"
+        );
+        predefinedProductTypes[9] = Types.ProductTypeAddDTO(
+            "Frisca ",
+            "Frisca obtinuta din lapte si zahar"
+        );
+        predefinedProductTypes[10] = Types.ProductTypeAddDTO(
+            "Zahar",
+            "Zahar alb din trestie de zahar"
+        );
+        predefinedProductTypes[11] = Types.ProductTypeAddDTO(
+            "Vanilie",
+            "Extract natural de vanile"
+        );
+        predefinedProductTypes[12] = Types.ProductTypeAddDTO(
+            "Gheata",
+            "Apa inghetata"
+        );
+        predefinedProductTypes[13] = Types.ProductTypeAddDTO(
+            "Inghetata de vanilie",
+            "Inghetata creamoasa cu aroma de vanilie"
+        );
+        predefinedProductTypes[14] = Types.ProductTypeAddDTO(
+            "Unt",
+            "Unt din lapte de vaca  cu 80% grasime"
+        );
+        predefinedProductTypes[15] = Types.ProductTypeAddDTO(
+            "Oua",
+            "Oua de casa"
+        );
+        predefinedProductTypes[16] = Types.ProductTypeAddDTO(
+            "Cacao",
+            "Praf de cacao"
+        );
+        predefinedProductTypes[17] = Types.ProductTypeAddDTO(
+            "Ciocolata ",
+            "Ciocolata de menaj"
+        );
+        predefinedProductTypes[18] = Types.ProductTypeAddDTO(
+            "Bucatele de ciocolata",
+            "Ciocolata in bucatele"
+        );
+        predefinedProductTypes[19] = Types.ProductTypeAddDTO(
+            "Fursecuri cu ciocolata",
+            "De nedescris"
         );
         _addProductTypeList(predefinedProductTypes);
-        Types.Recepie[] memory predefinedRecepies = new Types.Recepie[](4);
         Types.RecepieIngredient[]
             memory predefinedRecepieIngredients = new Types.RecepieIngredient[](
-                10
+                31
             );
         // recepie 0: Paine
         predefinedRecepieIngredients[0] = Types.RecepieIngredient(0, 0, 6);
@@ -66,6 +109,35 @@ contract Products {
         predefinedRecepieIngredients[7] = Types.RecepieIngredient(3, 3, 1);
         predefinedRecepieIngredients[8] = Types.RecepieIngredient(3, 4, 1);
         predefinedRecepieIngredients[9] = Types.RecepieIngredient(3, 6, 1);
+        // recepie 4: Inghetata
+        predefinedRecepieIngredients[10] = Types.RecepieIngredient(4, 2, 1);
+        predefinedRecepieIngredients[11] = Types.RecepieIngredient(4, 5, 1);
+        predefinedRecepieIngredients[12] = Types.RecepieIngredient(4, 9, 1);
+        predefinedRecepieIngredients[13] = Types.RecepieIngredient(4, 10, 1);
+        predefinedRecepieIngredients[14] = Types.RecepieIngredient(4, 11, 1);
+        predefinedRecepieIngredients[15] = Types.RecepieIngredient(4, 12, 1);
+        // recepie 5: Fursecuri de ciocolata
+        predefinedRecepieIngredients[16] = Types.RecepieIngredient(5, 0, 1);
+        predefinedRecepieIngredients[17] = Types.RecepieIngredient(5, 2, 1);
+        predefinedRecepieIngredients[18] = Types.RecepieIngredient(5, 10, 1);
+        predefinedRecepieIngredients[19] = Types.RecepieIngredient(5, 11, 1);
+        predefinedRecepieIngredients[20] = Types.RecepieIngredient(5, 14, 1);
+        predefinedRecepieIngredients[21] = Types.RecepieIngredient(5, 15, 1);
+        predefinedRecepieIngredients[22] = Types.RecepieIngredient(5, 16, 1);
+        predefinedRecepieIngredients[23] = Types.RecepieIngredient(5, 18, 1);
+        // recepie 6: Ciocolata
+        predefinedRecepieIngredients[24] = Types.RecepieIngredient(6, 16, 1);
+        predefinedRecepieIngredients[25] = Types.RecepieIngredient(6, 5, 1);
+        predefinedRecepieIngredients[26] = Types.RecepieIngredient(6, 10, 1);
+        // recepie 7: Bucatele de ciocolata
+        predefinedRecepieIngredients[27] = Types.RecepieIngredient(7, 17, 1);
+        // recepie 8: Unt
+        predefinedRecepieIngredients[28] = Types.RecepieIngredient(8, 5, 1);
+        // recepie 9: Frisca
+        predefinedRecepieIngredients[29] = Types.RecepieIngredient(9, 5, 1);
+        predefinedRecepieIngredients[30] = Types.RecepieIngredient(9, 10, 1);
+
+        Types.Recepie[] memory predefinedRecepies = new Types.Recepie[](10);
         // recepie 0
         recepieIngredients[0][0] = predefinedRecepieIngredients[0];
         recepieIngredients[0][1] = predefinedRecepieIngredients[1];
@@ -78,24 +150,45 @@ contract Products {
         // recepie 2
         recepieIngredients[2][0] = predefinedRecepieIngredients[5];
         recepieIngredients[2][1] = predefinedRecepieIngredients[6];
-        predefinedRecepies[2] = Types.Recepie(
-            2,
-            6,
-            "Cascaval din lapte de vaca",
-            2,
-            10
-        );
+        predefinedRecepies[2] = Types.Recepie(2, 6, "Cascaval", 2, 10);
         // recepie 3
         recepieIngredients[3][0] = predefinedRecepieIngredients[7];
         recepieIngredients[3][1] = predefinedRecepieIngredients[8];
         recepieIngredients[3][2] = predefinedRecepieIngredients[9];
-        predefinedRecepies[3] = Types.Recepie(
-            3,
-            7,
-            "Sandwich cu sunca si cascaval",
-            3,
-            10
-        );
+        predefinedRecepies[3] = Types.Recepie(3, 7, "Sandwich", 3, 10);
+        // recepie 4
+        recepieIngredients[4][0] = predefinedRecepieIngredients[10];
+        recepieIngredients[4][1] = predefinedRecepieIngredients[11];
+        recepieIngredients[4][2] = predefinedRecepieIngredients[12];
+        recepieIngredients[4][3] = predefinedRecepieIngredients[13];
+        recepieIngredients[4][4] = predefinedRecepieIngredients[14];
+        recepieIngredients[4][5] = predefinedRecepieIngredients[15];
+        predefinedRecepies[4] = Types.Recepie(4, 13, "Inghetata", 6, 1);
+        // recepie 5
+        recepieIngredients[5][0] = predefinedRecepieIngredients[16];
+        recepieIngredients[5][1] = predefinedRecepieIngredients[17];
+        recepieIngredients[5][2] = predefinedRecepieIngredients[18];
+        recepieIngredients[5][3] = predefinedRecepieIngredients[19];
+        recepieIngredients[5][4] = predefinedRecepieIngredients[20];
+        recepieIngredients[5][5] = predefinedRecepieIngredients[21];
+        recepieIngredients[5][6] = predefinedRecepieIngredients[22];
+        recepieIngredients[5][7] = predefinedRecepieIngredients[23];
+        predefinedRecepies[5] = Types.Recepie(5, 19, "Fursecuri", 8, 1);
+        // recepie 6
+        recepieIngredients[6][0] = predefinedRecepieIngredients[24];
+        recepieIngredients[6][1] = predefinedRecepieIngredients[25];
+        recepieIngredients[6][2] = predefinedRecepieIngredients[26];
+        predefinedRecepies[6] = Types.Recepie(6, 17, "Ciocolata", 3, 1);
+        // recepie 7
+        recepieIngredients[7][0] = predefinedRecepieIngredients[27];
+        predefinedRecepies[7] = Types.Recepie(7, 18, "Bucati ciocolata", 1, 1);
+        // recepie 8
+        recepieIngredients[8][0] = predefinedRecepieIngredients[28];
+        predefinedRecepies[8] = Types.Recepie(8, 14, "Unt ", 1, 1);
+        // recepie 9
+        recepieIngredients[9][0] = predefinedRecepieIngredients[29];
+        recepieIngredients[9][1] = predefinedRecepieIngredients[30];
+        predefinedRecepies[9] = Types.Recepie(9, 9, "Frisca ", 2, 1);
 
         _addRecepieList(predefinedRecepies);
     }
@@ -121,6 +214,8 @@ contract Products {
     // the number of parents is stored in the recepie, number of ingredients
     mapping(string => string[]) public parentProducts;
 
+    mapping(string => bool) public blockedProducts;
+
     // Events
 
     event NewProduct(
@@ -143,6 +238,8 @@ contract Products {
 
     event NewProductType(string name, uint256 id);
     event NewRecepie(uint256 id, uint256 resultTypeId, string resultTypeName);
+
+    event BlockedProduct(string barcodeId, bool status);
 
     // Contract Methods
 
@@ -188,11 +285,6 @@ contract Products {
         string memory manufacturerName,
         address myAccount
     ) public {
-        // require(
-        //     product_.manufacturerId == myAccount,
-        //     "Only manufacturer can add products"
-        // );
-        // TODO: Add manufacturer id + region association
         string memory barcodeId = generateBarcode(
             manufacturerDetails.region,
             manufacturerDetails.code,
@@ -259,7 +351,11 @@ contract Products {
                     (recepieIngredients[recepie_.id][i].productTypeId ==
                         products[userLinkedStockItems[user.id][j].barcodeId]
                             .productTypeId) &&
-                    (bytes(products[_parentProducts[i]].barcodeId).length == 0)
+                    (bytes(products[_parentProducts[i]].barcodeId).length ==
+                        0) &&
+                    (blockedProducts[
+                        userLinkedStockItems[user.id][j].barcodeId
+                    ] != true)
                 ) {
                     // check if the quantity is enough for the recepie
                     // require(
@@ -281,10 +377,8 @@ contract Products {
 
                     // check if the quantity is 0 and delete the products
                     if (userLinkedStockItems[user.id][j].quantity == 0) {
-                        // NEED TO THINK THIS FOR userLinkedStockItems
-                        // OLD IMPLEMENTAION TODO: check this
-                        // maybe dont delete this...
-                        // delete products[userLinkedProducts[user.id][j]];
+                        // TODO: create a mechanism to delete the item
+                        // and update the position of others
                         // delete userLinkedProducts[user.id][j];
                     }
                 }
@@ -346,6 +440,15 @@ contract Products {
         );
     }
 
+    function blockProduct(string memory barcodeId, bool status) external {
+        require(
+            compareStrings(products[barcodeId].barcodeId, "") == false,
+            "Product does not exist"
+        );
+        blockedProducts[barcodeId] = status;
+        emit BlockedProduct(barcodeId, status);
+    }
+
     // Object Transfer
 
     mapping(uint256 => Types.Transfer) public transfers;
@@ -366,7 +469,7 @@ contract Products {
         string memory _barcodeId,
         uint256 _quantity,
         address _receiver
-    ) external {
+    ) external productIsNotBlocked(_barcodeId) {
         Types.Transfer memory newTransfer = Types.Transfer({
             id: transferCount,
             sender: msg.sender,
@@ -377,8 +480,10 @@ contract Products {
         });
 
         transfers[transferCount] = (newTransfer);
+        accountTransfers[msg.sender].push(transferCount);
         accountTransfers[_receiver].push(transferCount);
         accountTransferCount[_receiver]++;
+        accountTransferCount[msg.sender]++;
         transferCount++;
 
         emit ObjectTransferred(
@@ -422,8 +527,9 @@ contract Products {
 
     function refuseTransfer(uint _transferId) external {
         require(
-            transfers[_transferId].receiver == msg.sender,
-            "Only the intended receiver can refuse the transfer"
+            (transfers[_transferId].receiver == msg.sender) ||
+                (transfers[_transferId].sender == msg.sender),
+            "Only the receiver or the sender can refuse the transfer"
         );
         require(
             transfers[_transferId].status == Types.ObjectStatus.Pending,
@@ -435,7 +541,7 @@ contract Products {
         emit ObjectTransferred(
             _transferId,
             transfers[_transferId].sender,
-            msg.sender,
+            transfers[_transferId].receiver,
             transfers[_transferId].barcodeId,
             transfers[_transferId].quantity,
             Types.ObjectStatus.Refused
@@ -449,6 +555,11 @@ contract Products {
     }
 
     // Modifiers
+
+    modifier productIsNotBlocked(string memory barcodeId) {
+        require(blockedProducts[barcodeId] != true, "Product is blocked");
+        _;
+    }
 
     modifier productTypeIsValid(uint256 id_) {
         require(
