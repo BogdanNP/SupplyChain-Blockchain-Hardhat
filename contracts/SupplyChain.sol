@@ -79,10 +79,10 @@ contract SupplyChain {
         );
     }
 
-    function createProduct(uint256 recepieId) public onlyManufacturer {
+    function createProduct(uint256 recipeId) public onlyManufacturer {
         Types.UserDetails memory user = users.get(msg.sender);
         products._createProduct(
-            recepieId,
+            recipeId,
             users.getManufacturerDetails(msg.sender),
             user
         );

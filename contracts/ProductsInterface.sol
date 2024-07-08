@@ -6,9 +6,9 @@ pragma solidity >=0.7.3;
 import "./Types.sol";
 
 interface ProductsInterface {
-    function _addRecepieList(Types.Recepie[] memory recepieList) external;
+    function _addRecipeList(Types.Recipe[] memory recipeList) external;
 
-    function _addRecepie(Types.Recepie memory recepie) external;
+    function _addRecipe(Types.Recipe memory recipe) external;
 
     function _addProductTypeList(
         Types.ProductTypeAddDTO[] memory productTypeList
@@ -26,7 +26,7 @@ interface ProductsInterface {
     ) external;
 
     function _createProduct(
-        uint256 recepieId,
+        uint256 recipeId,
         Types.ManufacturerDetails memory manufacturerDetails,
         Types.UserDetails memory user
     ) external;

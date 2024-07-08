@@ -12,15 +12,15 @@ contract Products {
             memory predefinedProductTypes = new Types.ProductTypeAddDTO[](20);
         predefinedProductTypes[0] = Types.ProductTypeAddDTO(
             "Faina alba",
-            "Faina alba din grau"
+            "Faina alba din grau 5kg"
         );
         predefinedProductTypes[1] = Types.ProductTypeAddDTO(
             "Drojdie",
-            "Drojdie uscata de panificatie"
+            "Drojdie uscata de panificatie 100g"
         );
         predefinedProductTypes[2] = Types.ProductTypeAddDTO(
             "Sare",
-            "Sare iodata"
+            "Sare iodata 1kg"
         );
         predefinedProductTypes[3] = Types.ProductTypeAddDTO(
             "Paine alba",
@@ -28,15 +28,15 @@ contract Products {
         );
         predefinedProductTypes[4] = Types.ProductTypeAddDTO(
             "Sunca de porc",
-            "Produs fiert in membrana artificiala necomestibila"
+            "Sunca de porc 500g - Produs fiert in membrana artificiala necomestibila"
         );
         predefinedProductTypes[5] = Types.ProductTypeAddDTO(
             "Lapte de vaca",
-            "Lapte de vaca cu 3.5% grasime"
+            "Lapte de vaca - 10L"
         );
         predefinedProductTypes[6] = Types.ProductTypeAddDTO(
             "Cascaval",
-            "Cascaval din lapte de vaca"
+            "Cascaval 500g din lapte de vaca"
         );
         predefinedProductTypes[7] = Types.ProductTypeAddDTO(
             "Sandwich",
@@ -44,153 +44,150 @@ contract Products {
         );
         predefinedProductTypes[8] = Types.ProductTypeAddDTO(
             "Pulpa de porc",
-            "Produs si ambalat in Romania"
+            "Pulpa de porc 10kg - Produs si ambalat in Romania"
         );
         predefinedProductTypes[9] = Types.ProductTypeAddDTO(
             "Frisca ",
-            "Frisca obtinuta din lapte si zahar"
+            "Frisca 500ml - obtinuta din lapte si zahar"
         );
         predefinedProductTypes[10] = Types.ProductTypeAddDTO(
             "Zahar",
-            "Zahar alb din trestie de zahar"
+            "Zahar alb 500g - din trestie de zahar"
         );
         predefinedProductTypes[11] = Types.ProductTypeAddDTO(
-            "Vanilie",
-            "Extract natural de vanile"
+            "Esenta de vanilie",
+            "Esenta de vanilie 50ml - Din extract natural de vanile"
         );
         predefinedProductTypes[12] = Types.ProductTypeAddDTO(
             "Gheata",
-            "Apa inghetata"
+            "Gheata - 10kg"
         );
         predefinedProductTypes[13] = Types.ProductTypeAddDTO(
             "Inghetata de vanilie",
-            "Inghetata creamoasa cu aroma de vanilie"
+            "Inghetata creamoasa cu aroma de vanilie - 500g"
         );
-        predefinedProductTypes[14] = Types.ProductTypeAddDTO(
-            "Unt",
-            "Unt din lapte de vaca  cu 80% grasime"
-        );
+        predefinedProductTypes[14] = Types.ProductTypeAddDTO("Unt", "Unt 1kg");
         predefinedProductTypes[15] = Types.ProductTypeAddDTO(
             "Oua",
-            "Oua de casa"
+            "10 oua de casa"
         );
         predefinedProductTypes[16] = Types.ProductTypeAddDTO(
             "Cacao",
-            "Praf de cacao"
+            "Praf de cacao - 500g"
         );
         predefinedProductTypes[17] = Types.ProductTypeAddDTO(
             "Ciocolata ",
-            "Ciocolata de menaj"
+            "Ciocolata de menaj - 1kg"
         );
         predefinedProductTypes[18] = Types.ProductTypeAddDTO(
             "Bucatele de ciocolata",
-            "Ciocolata in bucatele"
+            "Bucatele de ciocolata - 500g"
         );
         predefinedProductTypes[19] = Types.ProductTypeAddDTO(
             "Fursecuri cu ciocolata",
-            "De nedescris"
+            "Fursecuri cu ciocolata - 10"
         );
         _addProductTypeList(predefinedProductTypes);
-        Types.RecepieIngredient[]
-            memory predefinedRecepieIngredients = new Types.RecepieIngredient[](
+        Types.RecipeIngredient[]
+            memory predefinedRecipeIngredients = new Types.RecipeIngredient[](
                 31
             );
-        // recepie 0: Paine
-        predefinedRecepieIngredients[0] = Types.RecepieIngredient(0, 0, 6);
-        predefinedRecepieIngredients[1] = Types.RecepieIngredient(0, 1, 6);
-        predefinedRecepieIngredients[2] = Types.RecepieIngredient(0, 2, 6);
-        // recepie 1: Sunca
-        predefinedRecepieIngredients[3] = Types.RecepieIngredient(1, 8, 10);
-        predefinedRecepieIngredients[4] = Types.RecepieIngredient(1, 2, 1);
-        // recepie 2: Cascaval
-        predefinedRecepieIngredients[5] = Types.RecepieIngredient(2, 5, 6);
-        predefinedRecepieIngredients[6] = Types.RecepieIngredient(2, 2, 1);
-        // recepie 3: Sandwich
-        predefinedRecepieIngredients[7] = Types.RecepieIngredient(3, 3, 1);
-        predefinedRecepieIngredients[8] = Types.RecepieIngredient(3, 4, 1);
-        predefinedRecepieIngredients[9] = Types.RecepieIngredient(3, 6, 1);
-        // recepie 4: Inghetata
-        predefinedRecepieIngredients[10] = Types.RecepieIngredient(4, 2, 1);
-        predefinedRecepieIngredients[11] = Types.RecepieIngredient(4, 5, 1);
-        predefinedRecepieIngredients[12] = Types.RecepieIngredient(4, 9, 1);
-        predefinedRecepieIngredients[13] = Types.RecepieIngredient(4, 10, 1);
-        predefinedRecepieIngredients[14] = Types.RecepieIngredient(4, 11, 1);
-        predefinedRecepieIngredients[15] = Types.RecepieIngredient(4, 12, 1);
-        // recepie 5: Fursecuri de ciocolata
-        predefinedRecepieIngredients[16] = Types.RecepieIngredient(5, 0, 1);
-        predefinedRecepieIngredients[17] = Types.RecepieIngredient(5, 2, 1);
-        predefinedRecepieIngredients[18] = Types.RecepieIngredient(5, 10, 1);
-        predefinedRecepieIngredients[19] = Types.RecepieIngredient(5, 11, 1);
-        predefinedRecepieIngredients[20] = Types.RecepieIngredient(5, 14, 1);
-        predefinedRecepieIngredients[21] = Types.RecepieIngredient(5, 15, 1);
-        predefinedRecepieIngredients[22] = Types.RecepieIngredient(5, 16, 1);
-        predefinedRecepieIngredients[23] = Types.RecepieIngredient(5, 18, 1);
-        // recepie 6: Ciocolata
-        predefinedRecepieIngredients[24] = Types.RecepieIngredient(6, 16, 1);
-        predefinedRecepieIngredients[25] = Types.RecepieIngredient(6, 5, 1);
-        predefinedRecepieIngredients[26] = Types.RecepieIngredient(6, 10, 1);
-        // recepie 7: Bucatele de ciocolata
-        predefinedRecepieIngredients[27] = Types.RecepieIngredient(7, 17, 1);
-        // recepie 8: Unt
-        predefinedRecepieIngredients[28] = Types.RecepieIngredient(8, 5, 1);
-        // recepie 9: Frisca
-        predefinedRecepieIngredients[29] = Types.RecepieIngredient(9, 5, 1);
-        predefinedRecepieIngredients[30] = Types.RecepieIngredient(9, 10, 1);
+        // recipe 0: Paine
+        predefinedRecipeIngredients[0] = Types.RecipeIngredient(0, 0, 10);
+        predefinedRecipeIngredients[1] = Types.RecipeIngredient(0, 1, 10);
+        predefinedRecipeIngredients[2] = Types.RecipeIngredient(0, 2, 1);
+        // recipe 1: Sunca
+        predefinedRecipeIngredients[3] = Types.RecipeIngredient(1, 8, 5);
+        predefinedRecipeIngredients[4] = Types.RecipeIngredient(1, 2, 1);
+        // recipe 2: Cascaval
+        predefinedRecipeIngredients[5] = Types.RecipeIngredient(2, 5, 10);
+        predefinedRecipeIngredients[6] = Types.RecipeIngredient(2, 2, 1);
+        // recipe 3: Sandwich
+        predefinedRecipeIngredients[7] = Types.RecipeIngredient(3, 3, 1);
+        predefinedRecipeIngredients[8] = Types.RecipeIngredient(3, 4, 1);
+        predefinedRecipeIngredients[9] = Types.RecipeIngredient(3, 6, 1);
+        // recipe 4: Inghetata
+        predefinedRecipeIngredients[10] = Types.RecipeIngredient(4, 2, 1);
+        predefinedRecipeIngredients[11] = Types.RecipeIngredient(4, 5, 1);
+        predefinedRecipeIngredients[12] = Types.RecipeIngredient(4, 9, 10);
+        predefinedRecipeIngredients[13] = Types.RecipeIngredient(4, 10, 4);
+        predefinedRecipeIngredients[14] = Types.RecipeIngredient(4, 11, 2);
+        predefinedRecipeIngredients[15] = Types.RecipeIngredient(4, 15, 2);
+        // recipe 5: Fursecuri de ciocolata
+        predefinedRecipeIngredients[16] = Types.RecipeIngredient(5, 0, 30);
+        predefinedRecipeIngredients[17] = Types.RecipeIngredient(5, 2, 1);
+        predefinedRecipeIngredients[18] = Types.RecipeIngredient(5, 10, 200);
+        predefinedRecipeIngredients[19] = Types.RecipeIngredient(5, 11, 4);
+        predefinedRecipeIngredients[20] = Types.RecipeIngredient(5, 14, 100);
+        predefinedRecipeIngredients[21] = Types.RecipeIngredient(5, 15, 80);
+        predefinedRecipeIngredients[22] = Types.RecipeIngredient(5, 16, 40);
+        predefinedRecipeIngredients[23] = Types.RecipeIngredient(5, 18, 200);
+        // recipe 6: Ciocolata
+        predefinedRecipeIngredients[24] = Types.RecipeIngredient(6, 16, 40);
+        predefinedRecipeIngredients[25] = Types.RecipeIngredient(6, 5, 10);
+        predefinedRecipeIngredients[26] = Types.RecipeIngredient(6, 10, 80);
+        // recipe 7: Bucatele de ciocolata
+        predefinedRecipeIngredients[27] = Types.RecipeIngredient(7, 17, 100);
+        // recipe 8: Unt
+        predefinedRecipeIngredients[28] = Types.RecipeIngredient(8, 5, 100);
+        // recipe 9: Frisca
+        predefinedRecipeIngredients[29] = Types.RecipeIngredient(9, 5, 6);
+        predefinedRecipeIngredients[30] = Types.RecipeIngredient(9, 10, 1);
 
-        Types.Recepie[] memory predefinedRecepies = new Types.Recepie[](10);
-        // recepie 0
-        recepieIngredients[0][0] = predefinedRecepieIngredients[0];
-        recepieIngredients[0][1] = predefinedRecepieIngredients[1];
-        recepieIngredients[0][2] = predefinedRecepieIngredients[2];
-        predefinedRecepies[0] = Types.Recepie(0, 3, "Paine alba", 3, 6);
-        // recepie 1
-        recepieIngredients[1][0] = predefinedRecepieIngredients[3];
-        recepieIngredients[1][1] = predefinedRecepieIngredients[4];
-        predefinedRecepies[1] = Types.Recepie(1, 4, "Sunca de porc", 2, 10);
-        // recepie 2
-        recepieIngredients[2][0] = predefinedRecepieIngredients[5];
-        recepieIngredients[2][1] = predefinedRecepieIngredients[6];
-        predefinedRecepies[2] = Types.Recepie(2, 6, "Cascaval", 2, 10);
-        // recepie 3
-        recepieIngredients[3][0] = predefinedRecepieIngredients[7];
-        recepieIngredients[3][1] = predefinedRecepieIngredients[8];
-        recepieIngredients[3][2] = predefinedRecepieIngredients[9];
-        predefinedRecepies[3] = Types.Recepie(3, 7, "Sandwich", 3, 10);
-        // recepie 4
-        recepieIngredients[4][0] = predefinedRecepieIngredients[10];
-        recepieIngredients[4][1] = predefinedRecepieIngredients[11];
-        recepieIngredients[4][2] = predefinedRecepieIngredients[12];
-        recepieIngredients[4][3] = predefinedRecepieIngredients[13];
-        recepieIngredients[4][4] = predefinedRecepieIngredients[14];
-        recepieIngredients[4][5] = predefinedRecepieIngredients[15];
-        predefinedRecepies[4] = Types.Recepie(4, 13, "Inghetata", 6, 1);
-        // recepie 5
-        recepieIngredients[5][0] = predefinedRecepieIngredients[16];
-        recepieIngredients[5][1] = predefinedRecepieIngredients[17];
-        recepieIngredients[5][2] = predefinedRecepieIngredients[18];
-        recepieIngredients[5][3] = predefinedRecepieIngredients[19];
-        recepieIngredients[5][4] = predefinedRecepieIngredients[20];
-        recepieIngredients[5][5] = predefinedRecepieIngredients[21];
-        recepieIngredients[5][6] = predefinedRecepieIngredients[22];
-        recepieIngredients[5][7] = predefinedRecepieIngredients[23];
-        predefinedRecepies[5] = Types.Recepie(5, 19, "Fursecuri", 8, 1);
-        // recepie 6
-        recepieIngredients[6][0] = predefinedRecepieIngredients[24];
-        recepieIngredients[6][1] = predefinedRecepieIngredients[25];
-        recepieIngredients[6][2] = predefinedRecepieIngredients[26];
-        predefinedRecepies[6] = Types.Recepie(6, 17, "Ciocolata", 3, 1);
-        // recepie 7
-        recepieIngredients[7][0] = predefinedRecepieIngredients[27];
-        predefinedRecepies[7] = Types.Recepie(7, 18, "Bucati ciocolata", 1, 1);
-        // recepie 8
-        recepieIngredients[8][0] = predefinedRecepieIngredients[28];
-        predefinedRecepies[8] = Types.Recepie(8, 14, "Unt ", 1, 1);
-        // recepie 9
-        recepieIngredients[9][0] = predefinedRecepieIngredients[29];
-        recepieIngredients[9][1] = predefinedRecepieIngredients[30];
-        predefinedRecepies[9] = Types.Recepie(9, 9, "Frisca ", 2, 1);
+        Types.Recipe[] memory predefinedRecipes = new Types.Recipe[](10);
+        // recipe 0
+        recipeIngredients[0][0] = predefinedRecipeIngredients[0];
+        recipeIngredients[0][1] = predefinedRecipeIngredients[1];
+        recipeIngredients[0][2] = predefinedRecipeIngredients[2];
+        predefinedRecipes[0] = Types.Recipe(0, 3, "Paine alba", 3, 100);
+        // recipe 1
+        recipeIngredients[1][0] = predefinedRecipeIngredients[3];
+        recipeIngredients[1][1] = predefinedRecipeIngredients[4];
+        predefinedRecipes[1] = Types.Recipe(1, 4, "Sunca de porc", 2, 70);
+        // recipe 2
+        recipeIngredients[2][0] = predefinedRecipeIngredients[5];
+        recipeIngredients[2][1] = predefinedRecipeIngredients[6];
+        predefinedRecipes[2] = Types.Recipe(2, 6, "Cascaval", 2, 20);
+        // recipe 3
+        recipeIngredients[3][0] = predefinedRecipeIngredients[7];
+        recipeIngredients[3][1] = predefinedRecipeIngredients[8];
+        recipeIngredients[3][2] = predefinedRecipeIngredients[9];
+        predefinedRecipes[3] = Types.Recipe(3, 7, "Sandwich", 3, 10);
+        // recipe 4
+        recipeIngredients[4][0] = predefinedRecipeIngredients[10];
+        recipeIngredients[4][1] = predefinedRecipeIngredients[11];
+        recipeIngredients[4][2] = predefinedRecipeIngredients[12];
+        recipeIngredients[4][3] = predefinedRecipeIngredients[13];
+        recipeIngredients[4][4] = predefinedRecipeIngredients[14];
+        recipeIngredients[4][5] = predefinedRecipeIngredients[15];
+        predefinedRecipes[4] = Types.Recipe(4, 13, "Inghetata", 6, 1);
+        // recipe 5
+        recipeIngredients[5][0] = predefinedRecipeIngredients[16];
+        recipeIngredients[5][1] = predefinedRecipeIngredients[17];
+        recipeIngredients[5][2] = predefinedRecipeIngredients[18];
+        recipeIngredients[5][3] = predefinedRecipeIngredients[19];
+        recipeIngredients[5][4] = predefinedRecipeIngredients[20];
+        recipeIngredients[5][5] = predefinedRecipeIngredients[21];
+        recipeIngredients[5][6] = predefinedRecipeIngredients[22];
+        recipeIngredients[5][7] = predefinedRecipeIngredients[23];
+        predefinedRecipes[5] = Types.Recipe(5, 19, "Fursecuri", 8, 1000);
+        // recipe 6
+        recipeIngredients[6][0] = predefinedRecipeIngredients[24];
+        recipeIngredients[6][1] = predefinedRecipeIngredients[25];
+        recipeIngredients[6][2] = predefinedRecipeIngredients[26];
+        predefinedRecipes[6] = Types.Recipe(6, 17, "Ciocolata", 3, 100);
+        // recipe 7
+        recipeIngredients[7][0] = predefinedRecipeIngredients[27];
+        predefinedRecipes[7] = Types.Recipe(7, 18, "Bucati ciocolata", 1, 200);
+        // recipe 8
+        recipeIngredients[8][0] = predefinedRecipeIngredients[28];
+        predefinedRecipes[8] = Types.Recipe(8, 14, "Unt ", 1, 100);
+        // recipe 9
+        recipeIngredients[9][0] = predefinedRecipeIngredients[29];
+        recipeIngredients[9][1] = predefinedRecipeIngredients[30];
+        predefinedRecipes[9] = Types.Recipe(9, 9, "Frisca ", 2, 200);
 
-        _addRecepieList(predefinedRecepies);
+        _addRecipeList(predefinedRecipes);
     }
 
     // product type id => product type
@@ -205,13 +202,13 @@ contract Products {
     // count product creation, transfer // used by all users
     mapping(address => uint256) public stockItemCounter;
 
-    mapping(uint256 => mapping(uint256 => Types.RecepieIngredient))
-        public recepieIngredients;
-    mapping(uint256 => Types.Recepie) public recepies;
-    uint256 public recepieCounter = 0;
+    mapping(uint256 => mapping(uint256 => Types.RecipeIngredient))
+        public recipeIngredients;
+    mapping(uint256 => Types.Recipe) public recipes;
+    uint256 public recipeCounter = 0;
 
     // links one product barcodeId to it's parents barcodeId,
-    // the number of parents is stored in the recepie, number of ingredients
+    // the number of parents is stored in the recipe, number of ingredients
     mapping(string => string[]) public parentProducts;
 
     mapping(string => bool) public blockedProducts;
@@ -237,26 +234,22 @@ contract Products {
     );
 
     event NewProductType(string name, uint256 id);
-    event NewRecepie(uint256 id, uint256 resultTypeId, string resultTypeName);
+    event NewRecipe(uint256 id, uint256 resultTypeId, string resultTypeName);
 
     event BlockedProduct(string barcodeId, bool status);
 
     // Contract Methods
 
-    function _addRecepieList(Types.Recepie[] memory recepieList) public {
-        for (uint i = 0; i < recepieList.length; i++) {
-            _addRecepie(recepieList[i]);
+    function _addRecipeList(Types.Recipe[] memory recipeList) public {
+        for (uint i = 0; i < recipeList.length; i++) {
+            _addRecipe(recipeList[i]);
         }
     }
 
-    function _addRecepie(Types.Recepie memory recepie) public {
-        recepies[recepieCounter] = recepie;
-        emit NewRecepie(
-            recepie.id,
-            recepie.resultTypeId,
-            recepie.resultTypeName
-        );
-        recepieCounter++;
+    function _addRecipe(Types.Recipe memory recipe) public {
+        recipes[recipeCounter] = recipe;
+        emit NewRecipe(recipe.id, recipe.resultTypeId, recipe.resultTypeName);
+        recipeCounter++;
     }
 
     function _addProductTypeList(
@@ -325,30 +318,30 @@ contract Products {
     // think about typeId -> list of user linked stock items
 
     function _createProduct(
-        uint256 recepieId,
+        uint256 recipeId,
         Types.ManufacturerDetails memory manufacturerDetails,
         Types.UserDetails memory user
     ) public {
-        Types.Recepie memory recepie_ = recepies[recepieId];
+        Types.Recipe memory recipe_ = recipes[recipeId];
         string[] memory _parentProducts = new string[](
-            recepie_.ingredientsCount
+            recipe_.ingredientsCount
         );
         uint256 ingredientsCount = 0;
-        // iterate through required products by the recepie
+        // iterate through required products by the recipe
         for (uint j = 0; j < userLinkedStockItems[user.id].length; ++j) {
-            if (recepie_.ingredientsCount == ingredientsCount) {
+            if (recipe_.ingredientsCount == ingredientsCount) {
                 break;
             }
-            for (uint i = 0; i < recepie_.ingredientsCount; ++i) {
+            for (uint i = 0; i < recipe_.ingredientsCount; ++i) {
                 // iterate through user linked products
-                // check if user product is in the recepie
+                // check if user product is in the recipe
                 // check quantity
                 // check product type
                 // check if product was not already used
                 if (
-                    (recepieIngredients[recepie_.id][i].productQuantity <=
+                    (recipeIngredients[recipe_.id][i].productQuantity <=
                         userLinkedStockItems[user.id][j].quantity) &&
-                    (recepieIngredients[recepie_.id][i].productTypeId ==
+                    (recipeIngredients[recipe_.id][i].productTypeId ==
                         products[userLinkedStockItems[user.id][j].barcodeId]
                             .productTypeId) &&
                     (bytes(products[_parentProducts[i]].barcodeId).length ==
@@ -357,11 +350,11 @@ contract Products {
                         userLinkedStockItems[user.id][j].barcodeId
                     ] != true)
                 ) {
-                    // check if the quantity is enough for the recepie
+                    // check if the quantity is enough for the recipe
                     // require(
-                    //     recepieIngredients[recepie_.id][i].productQuantity <=
+                    //     recipeIngredients[recipe_.id][i].productQuantity <=
                     //         products[userLinkedProducts[user.id][j]].batchCount,
-                    //     "Recepie requires user to have more quantity of some product"
+                    //     "Recipe requires user to have more quantity of some product"
                     // );
                     // save the barcodeId of the used product
                     _parentProducts[i] = userLinkedStockItems[user.id][j]
@@ -372,7 +365,7 @@ contract Products {
 
                     // update the quantity of used stock item
                     userLinkedStockItems[user.id][j]
-                        .quantity -= recepieIngredients[recepie_.id][i]
+                        .quantity -= recipeIngredients[recipe_.id][i]
                         .productQuantity;
 
                     // check if the quantity is 0 and delete the products
@@ -387,14 +380,14 @@ contract Products {
 
         // check if all ingredients were found and used
         require(
-            ingredientsCount == recepie_.ingredientsCount,
-            "There are not enough ingredients for this recepie, please check your stock"
+            ingredientsCount == recipe_.ingredientsCount,
+            "There are not enough ingredients for this recipe, please check your stock"
         );
 
         // create the new product
         Types.Product memory product_ = Types.Product(
-            recepie_.resultTypeName,
-            recepie_.resultTypeId,
+            recipe_.resultTypeName,
+            recipe_.resultTypeId,
             generateBarcode(
                 manufacturerDetails.region,
                 manufacturerDetails.code,
@@ -404,8 +397,8 @@ contract Products {
             user.id,
             (block.timestamp / 100) * 100,
             (block.timestamp / 100) * 100 + 86400, //TODO: 86400=1day in timestamp
-            recepie_.id,
-            recepie_.ingredientsCount
+            recipe_.id,
+            recipe_.ingredientsCount
         );
 
         // register the product in parentProducts list
@@ -421,7 +414,7 @@ contract Products {
         // create stock item
         Types.StockItem memory stockItem = Types.StockItem(
             product_.barcodeId,
-            recepie_.quantityResult
+            recipe_.quantityResult
         );
         // link the stock item to the user
         userLinkedStockItems[user.id].push(stockItem);
@@ -632,7 +625,7 @@ contract Products {
         // the creation of a new object? BatchProduct:
         // quantity + barcodeId
         // + adding serialNumber to each Product object
-        // how does this affect recepies?
+        // how does this affect recipes?
         // how to change things with current data structure?
         // because barcodeId is the identifier for each product,
         // it is unique per product creation, and we save the product

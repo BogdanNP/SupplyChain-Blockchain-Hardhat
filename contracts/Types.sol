@@ -34,13 +34,13 @@ library Types {
         string details;
     }
 
-    struct RecepieIngredient {
-        uint256 recepieId;
+    struct RecipeIngredient {
+        uint256 recipeId;
         uint256 productTypeId;
         uint256 productQuantity;
     }
 
-    struct Recepie {
+    struct Recipe {
         uint256 id;
         uint256 resultTypeId;
         string resultTypeName;
@@ -66,7 +66,7 @@ library Types {
         address manufacturerId;
         uint256 manufacturingDate;
         uint256 expirationDate;
-        uint256 recepieId;
+        uint256 recipeId;
         uint256 ingredientsCount;
     }
 

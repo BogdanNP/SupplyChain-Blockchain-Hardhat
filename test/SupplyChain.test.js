@@ -492,7 +492,7 @@ describe("SupplyChain", function () {
         quantity: 12,
       };
 
-      const recepie = {
+      const recipe = {
         productQuantities: [productQuantity1, productQuantity2],
         result: newProductType3,
         quantityResult: 5,
@@ -502,7 +502,7 @@ describe("SupplyChain", function () {
       await expect(
         supplyChain
           .connect(manufacturer)
-          .createProduct(recepie, "Test Create Product")
+          .createProduct(recipe, "Test Create Product")
       )
         .to.emit(supplyChain, "NewProduct")
         .withArgs(

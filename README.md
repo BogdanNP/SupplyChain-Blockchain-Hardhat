@@ -5,7 +5,7 @@ Key Functionalities:
 - [OK] Add User
 - [OK] Register / Login User
 - [REFINE] Add ProductType / Create them at the project init
-- [REFINE] Add Recepie / Create them at the project init
+- [REFINE] Add Recipe / Create them at the project init
 - Add Product
   - [REFINE] Base Product
   - [OK] Transform other products to create a new one
@@ -17,7 +17,7 @@ Key Functionalities:
 Steps:
 
 - Add ProductType
-- Add Recepie
+- Add Recipe
 - Create Product
 
 How to run:
@@ -33,15 +33,15 @@ Project Structure:
 
 - `Admin`:
   - [OK] adds users
-  - [TBD] confirms recepies
+  - [TBD] confirms recipes
 - `Base Manufacturer`:
   - [OK] adds products
   - [OK] sells products
 - `Manufacturer`:
-  - adds recepies
-    - waits for the recepies to by confirmed by the `Admin`
+  - adds recipes
+    - waits for the recipes to by confirmed by the `Admin`
   - buys products
-  - transforms the products by using the recepies and creates other products
+  - transforms the products by using the recipes and creates other products
   - sells products
 - `Supplier`:
   - buys products
