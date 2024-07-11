@@ -6,12 +6,6 @@ pragma solidity >=0.8.0;
 import "hardhat/console.sol";
 import "./Types.sol";
 
-// TODO: create a method for signup / register
-// Manufacturer: code, region,
-// Supplier: just the role, buys products from Manufacturer in large quantity
-// Vendor: just the role, buys products from Supplier and sells to Client users
-// all users except Clients should be verified by the Admin (Authority)
-// by default all addresses should have the role Client
 contract Users {
     constructor(string memory name_, string memory email_) {
         Types.UserDetails memory admin_ = Types.UserDetails({
@@ -92,7 +86,6 @@ contract Users {
     function _addUserByRole(Types.UserDetails memory user) internal {
         if (user.role == Types.UserRole.Manufacturer) {
             console.log("_addUser: Manufacturer");
-            // TODO: create a function for just adding man details
             manufacturerDetailList[user.id] = Types.ManufacturerDetails(
                 manufacutersCount,
                 usersCount

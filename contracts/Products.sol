@@ -8,6 +8,7 @@ import "./Types.sol";
 
 contract Products {
     constructor() {
+        // Definire tipuri de produse si retete pentru utilizare
         Types.ProductTypeAddDTO[]
             memory predefinedProductTypes = new Types.ProductTypeAddDTO[](20);
         predefinedProductTypes[0] = Types.ProductTypeAddDTO(
@@ -223,7 +224,6 @@ contract Products {
         uint256 expDateEpoch
     );
 
-    // it's so strange that events can send lists, but functions can't ~.~
     event ComposedProduct(
         string name,
         string manufacturerName,
@@ -305,7 +305,6 @@ contract Products {
         userLinkedStockItems[myAccount].push(stockItem);
         stockItemCounter[myAccount]++;
 
-        // console.log(myAccount);
         emit NewProduct(
             product.name,
             product.manufacturerName,
@@ -314,8 +313,6 @@ contract Products {
             product.expirationDate
         );
     }
-
-    // think about typeId -> list of user linked stock items
 
     function _createProduct(
         uint256 recipeId,
@@ -350,12 +347,6 @@ contract Products {
                         userLinkedStockItems[user.id][j].barcodeId
                     ] != true)
                 ) {
-                    // check if the quantity is enough for the recipe
-                    // require(
-                    //     recipeIngredients[recipe_.id][i].productQuantity <=
-                    //         products[userLinkedProducts[user.id][j]].batchCount,
-                    //     "Recipe requires user to have more quantity of some product"
-                    // );
                     // save the barcodeId of the used product
                     _parentProducts[i] = userLinkedStockItems[user.id][j]
                         .barcodeId;
@@ -367,13 +358,6 @@ contract Products {
                     userLinkedStockItems[user.id][j]
                         .quantity -= recipeIngredients[recipe_.id][i]
                         .productQuantity;
-
-                    // check if the quantity is 0 and delete the products
-                    if (userLinkedStockItems[user.id][j].quantity == 0) {
-                        // TODO: create a mechanism to delete the item
-                        // and update the position of others
-                        // delete userLinkedProducts[user.id][j];
-                    }
                 }
             }
         }
@@ -396,7 +380,7 @@ contract Products {
             user.name,
             user.id,
             (block.timestamp / 100) * 100,
-            (block.timestamp / 100) * 100 + 86400, //TODO: 86400=1day in timestamp
+            (block.timestamp / 100) * 100 + 30 * 86400, // 86400=1day in timestamp
             recipe_.id,
             recipe_.ingredientsCount
         );
@@ -422,7 +406,6 @@ contract Products {
         // increase the stockItemCounter
         stockItemCounter[user.id]++;
 
-        // toString(userLinkedProducts[user.id].length),
         emit ComposedProduct(
             product_.name,
             product_.manufacturerName,
@@ -598,43 +581,6 @@ contract Products {
             "Seller does not have the required quantity anymore"
         );
         userLinkedStockItems[sellerId_][matchIndex_].quantity -= quantity_;
-        // TODO: only modify quantity
-
-        // if (sellerProducts_.length == 1) {
-        //     delete userLinkedProducts[sellerId_];
-        // } else {
-        //     userLinkedProducts[sellerId_][matchIndex_] = userLinkedProducts[
-        //         sellerId_
-        //     ][sellerProducts_.length - 1];
-        //     delete userLinkedProducts[sellerId_][sellerProducts_.length - 1];
-        //     userLinkedProducts[sellerId_].pop();
-        // }
-
-        // TODO: maybe create a new list for bought products
-        // ISSUE: increase productCounter and lose the index
-        // SOLUTION: keep 2 indexes, one for counting all products of
-        // a user, one for counting the products created and which is
-        // used for generating the barcodeId;
-
-        // ISSUE: when having quantity, think about multiple
-        // users having the same product with the same barcodeId
-        // in that case batchCount is useless
-        // userLinkedProducts -> barcodeId + quantity
-        // (NEW ISSUE: what about serialNumber, just add it in userLinkedProducts)
-        // this means changing the whole structure of Product and
-        // the creation of a new object? BatchProduct:
-        // quantity + barcodeId
-        // + adding serialNumber to each Product object
-        // how does this affect recipes?
-        // how to change things with current data structure?
-        // because barcodeId is the identifier for each product,
-        // it is unique per product creation, and we save the product
-        // by mapping barcodeId to the product, we can make the changes
-        // just if we make userLinkedProducts a list of products, not
-        // a list of barcodeId, but i think this would be too much data
-        // to store :/
-        // TODO: modify in order to accept quantity
-
         bool buyerAlreadyHasStockItem = false;
         // check if buyer has this type of stock item
         for (uint256 i = 0; i < userLinkedStockItems[buyerId_].length; ++i) {

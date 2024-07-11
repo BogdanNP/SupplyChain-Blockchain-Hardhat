@@ -16,7 +16,9 @@ module.exports = {
     },
   },
   networks: {
-    hardhat: {},
+    hardhat: {
+      blockGasLimit: 10000000,
+    },
     sepolia: {
       url: ALCHEMY_API_URL,
       accounts: [SEPOLIA_PRIVATE_KEY],

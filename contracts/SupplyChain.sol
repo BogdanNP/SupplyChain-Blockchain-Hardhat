@@ -40,8 +40,8 @@ contract SupplyChain {
     }
 
     function addProductType(
-        Types.ProductTypeAddDTO memory productType_ // TODO: add a modifier, maybe onlyAdmin ?
-    ) public {
+        Types.ProductTypeAddDTO memory productType_
+    ) public onlyAdmin {
         products._addProductType(productType_);
     }
 

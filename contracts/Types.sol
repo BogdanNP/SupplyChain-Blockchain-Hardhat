@@ -53,11 +53,9 @@ library Types {
         uint256 manufacturingDate;
         uint256 expirationDate;
         bool isBatch;
-        // maybe keep this? IDK
         uint256 batchCount;
     }
 
-    // each product should be unique
     struct Product {
         string name;
         uint256 productTypeId;
@@ -70,16 +68,6 @@ library Types {
         uint256 ingredientsCount;
     }
 
-    // we create this
-    // userLinkedProducts: user id -> list of stock item
-    // we need 2 counters because a user can have bought
-    // stock items or created stock items, so for productCreation
-    // we need a separate counter
-    // QUESTION: should a stock item be unique?
-    // what if i buy 3 items and then buy other 3 with the same barcodeId?
-    // ANSWER: i think that in that case we can just increase the quantity,
-    // so each stockItem is unique
-    // LETS'S IMPLEMENT THIS!!!
     struct StockItem {
         string barcodeId;
         uint256 quantity;
@@ -100,11 +88,3 @@ library Types {
         ObjectStatus status;
     }
 }
-
-// barcode
-// EAN-13:
-// 2 number system // region
-// 5 manufacturer code // ~100k manufacurers
-// 5 product code // ~100k products/manufacturer
-//      * link manufacturer => productCodeCounter
-// 1 check digit
