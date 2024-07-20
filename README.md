@@ -1,5 +1,7 @@
 # SupplyChain Blockchain Hardhat Project
 
+The reason of creating a supply chain system on blockchain is to offer to the final customer an option to verify the history of a product from its raw materials. The system stores data on blockchain which does not allow others to alter the information.
+
 This project represents a basic system for a supply chain which enstablish the traceability for food products.
 
 This project tracks the creation of a new product. The creation of a product is divided in 2 cases:
@@ -47,10 +49,10 @@ User Types:
 
 ## Smart Contracts:
 
-- `Users` + `UsersInterface`
-- `Products` + `ProductsInterface`
-- `SupplyChain`
-- `Types`
+- `Users` + `UsersInterface`: stores data about users registered in the system
+- `Products` + `ProductsInterface`: stores data about product types, recipes, products, users stock of products, products transfers
+- `SupplyChain`: creates a connection between `Users` and `Products`. Takes data about users and uses them in functionalities which implies the products.
+- `Types`: declares all the data structures used in other smart contracts.
 
 ## System Requirements:
 
