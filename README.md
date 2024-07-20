@@ -1,15 +1,15 @@
-# SupplyChain Hardhat Project
+# SupplyChain Blockchain Hardhat Project
 
 This project represents a basic system for a supply chain which enstablish the traceability for food products.
 
 This project tracks the creation of a new product. The creation of a product is divided in 2 cases:
 
-- It is a base product, the manufacturer inserts its details: product type, production date and expiration date.
-- It is a composed product, depends on other products which were created by a manufacturer. In this case the creator of the product must have all the ingredients required in the stock. The transformation of the products to create a new one are stored as a `Recipe`.
+- Production of a base product, the manufacturer inserts its details: product type, production date and expiration date.
+- The product is a composed product, depends on other products which were created by a manufacturer. In this case the creator of the product must have all the ingredients required in the stock. The transformation of the products to create a new one are stored as a `Recipe`.
 
 This project lets the users to transfer products between them. The seller chooses which product they want to sell and to whom they want to sell to(they pick the buyer). Then, the buyer can see the transfer as being in pending and only them can accept or refuse the transfer.
 
-The key functionality is to trace back any product registered in the system. This can be done by searching a product by its barcode (any product created has a unique barcode). The system will check its ingredients and search for their details. The search will end when a base product is found.
+The key functionality is to trace back any product registered in the system. This can be done by searching a product by its barcode (any product created has a unique barcode). The system will check its ingredients and search for their details. The search will end when base product ingredients are found.
 
 Other functionality is to block a product which could be contaminated in order to avoid using it in other components.
 
@@ -35,13 +35,6 @@ User Types:
   - Transfer Object
 - Trace Product (Anybody with a MetaMask account)
 - Block Product (Admin)
-
-Steps:
-
-- Create Product
-- Sell Product / Create Transfer
-- Accept Transfer
-- Use Recipe to create a new product
 
 ## How to run:
 
