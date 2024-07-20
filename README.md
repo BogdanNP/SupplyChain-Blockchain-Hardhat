@@ -7,28 +7,34 @@ This project tracks the creation of a new product. The creation of a product is 
 - It is a base product, the manufacturer inserts its details: product type, production date and expiration date.
 - It is a composed product, depends on other products which were created by a manufacturer. In this case the creator of the product must have all the ingredients required in the stock. The transformation of the products to create a new one are stored as a `Recipe`.
 
-This project lets the users to transfer products between them. The seller chooses which product they want to sell and to whom they want to sell (they pick the buyer). The buyer can see the transfer as waiting and only they can accept or refuse the transfer.
+This project lets the users to transfer products between them. The seller chooses which product they want to sell and to whom they want to sell to(they pick the buyer). Then, the buyer can see the transfer as being in pending and only them can accept or refuse the transfer.
+
+The key functionality is to trace back any product registered in the system. This can be done by searching a product by its barcode (any product created has a unique barcode). The system will check its ingredients and search for their details. The search will end when a base product is found.
+
+Other functionality is to block a product which could be contaminated in order to avoid using it in other components.
 
 User Types:
 
-- `Admin`
-- `Manufacturer`
-- `Supplier`
-- `Vendor`
+- `Admin`: The autorithy which checks the quality of products and controls the actors of the supply chain.
+- `Manufacturer`: Can create new products.
+- `Supplier`: Buys more products and sells them to other participants.
+- `Vendor`: Sells products in small quantity to the consumer.
 
-Functionalities:
+## Functionalities:
 
 - Add User (Admin)
-- Register / Login User
-- Add ProductType / Create them at the project init
-- Add Recipe / Create them at the project init
-- Add Product
-  - Base Product
+- Register / Login User (Anybody with a MetaMask account)
+- Add ProductType / Created at the project init or can be added by an Admin
+- Add Recipe / Created at the project init
+- Add Product (Manufacturer)
+  - Insert base product details
   - Transform other products to create a new one
-- Sell Product
+- Sell Product (Any user)
   - Create Sell Request
   - Accept / Decline
   - Transfer Object
+- Trace Product (Anybody with a MetaMask account)
+- Block Product (Admin)
 
 Steps:
 
@@ -37,7 +43,7 @@ Steps:
 - Accept Transfer
 - Use Recipe to create a new product
 
-How to run:
+## How to run:
 
 - How to deploy blockchain contracts:
   - `npx hardhat run scripts/deploy_supply_chain.js`
@@ -46,31 +52,14 @@ How to run:
 - How to start the front-end(eth-app-react):
   - `npm start`
 
-Objects Structure:
-
-- User:
-  - [role, id, name, email, cf]
-- ProductType:
-  - [id, name, details]
-- Product:
-  - name: String
-  - typeId: String
-  - barcodeId: String
-  - manufacturerName: String
-  - manufacturerId
-  - manufacturingDate
-  - expirationDate
-  - isBatch: bool
-  - batchCount: int
-  - composition: String[]
-
-Contracts:
+## Smart Contracts:
 
 - `Users` + `UsersInterface`
 - `Products` + `ProductsInterface`
-- `ProductTransfers` + `ProductTransfersInterface`
+- `SupplyChain`
+- `Types`
 
-System Requirements:
+## System Requirements:
 
 - Node Version: `v16.20.2`
 - NPM Version: `8.19.9`
@@ -110,7 +99,7 @@ npx hardhat node
 npx hardhat run scripts/deploy.js
 ```
 
-Learnings:
+## Learnings:
 
 Revert
 If a transaction reverts, from the blockchain's state of view, it's like it never happened. No changes are stored. But the transaction is still visible off-chain, as a reverted transaction - but still no changes are stored, and this includes also event emittance.
