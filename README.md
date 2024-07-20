@@ -45,11 +45,11 @@ Steps:
 
 ## How to run:
 
-- How to deploy blockchain contracts:
-  - `npx hardhat run scripts/deploy_supply_chain.js`
-- How to run a local environment for the blockchain:
+- Open terminal, and run a local environment for the blockchain:
   - `npx hardhat node --network localhost`
-- How to start the front-end(eth-app-react):
+- Open new terminal and deploy blockchain smart-contracts:
+  - `npx hardhat run scripts/deploy_supply_chain.js`
+- Start the front-end:
   - `npm start`
 
 ## Smart Contracts:
@@ -77,13 +77,13 @@ Other requirements:
 - Alchemy account (optional)
 - Etherscan account (optional)
 
-To run the tests:
+Run the tests:
 
 ```shell
 npx hardhat test tests/SupplyChain.test.js --network hardhat
 ```
 
-To deploy the contracts:
+Deploy the contracts:
 
 ```shell
 npx hardhat run scripts/deploy_supply_chain.js --network sepolia
@@ -101,12 +101,12 @@ npx hardhat run scripts/deploy.js
 
 ## Learnings:
 
-Revert
+Revert:  
 If a transaction reverts, from the blockchain's state of view, it's like it never happened. No changes are stored. But the transaction is still visible off-chain, as a reverted transaction - but still no changes are stored, and this includes also event emittance.
 
 A reverted transaction is included in a block, so in that sense it's a regular transaction. So it does leave a permanent trace
 
-Delete in dynamic array:
+Delete in dynamic array:  
 When you delete an element from a dynamic array, the memory it occupies is not actually freed. Instead, the element is simply marked as deleted and will not be returned when you access the array
 
 Cheatsheet: https://docs.soliditylang.org/en/develop/cheatsheet.html
@@ -115,7 +115,7 @@ The "is" keyword: is used for inheritance in Solidity (https://docs.soliditylang
 
 Memory, Calldata, Storage: https://docs.alchemy.com/docs/when-to-use-storage-vs-memory-vs-calldata-in-solidity#:~:text=Memory%20is%20used%20to%20store,data%20permanently%20on%20the%20blockchain.
 
-msg.sender (sender of the message)
+msg.sender (sender of the message)  
 The person who's currently connecting with the contract, or the contract which s creating the call to other contract.
 That's why we need to send myAccount address when we make a call from SupplyChain.sol to Products.sol or any other contract.
 https://stackoverflow.com/questions/48562483/solidity-basics-what-msg-sender-stands-for
