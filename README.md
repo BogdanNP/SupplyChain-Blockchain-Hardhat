@@ -1,24 +1,41 @@
 # SupplyChain Hardhat Project
 
-Key Functionalities:
+This project represents a basic system for a supply chain which enstablish the traceability for food products.
 
-- [OK] Add User
-- [OK] Register / Login User
-- [REFINE] Add ProductType / Create them at the project init
-- [REFINE] Add Recipe / Create them at the project init
+This project tracks the creation of a new product. The creation of a product is divided in 2 cases:
+
+- It is a base product, the manufacturer inserts its details: product type, production date and expiration date.
+- It is a composed product, depends on other products which were created by a manufacturer. In this case the creator of the product must have all the ingredients required in the stock. The transformation of the products to create a new one are stored as a `Recipe`.
+
+This project lets the users to transfer products between them. The seller chooses which product they want to sell and to whom they want to sell (they pick the buyer). The buyer can see the transfer as waiting and only they can accept or refuse the transfer.
+
+User Types:
+
+- `Admin`
+- `Manufacturer`
+- `Supplier`
+- `Vendor`
+
+Functionalities:
+
+- Add User (Admin)
+- Register / Login User
+- Add ProductType / Create them at the project init
+- Add Recipe / Create them at the project init
 - Add Product
-  - [REFINE] Base Product
-  - [OK] Transform other products to create a new one
-- [OK] Sell Product
-  - [OK] Create Sell Request
-  - [OK] Accept / Decline
-  - [OK] Transfer Object
+  - Base Product
+  - Transform other products to create a new one
+- Sell Product
+  - Create Sell Request
+  - Accept / Decline
+  - Transfer Object
 
 Steps:
 
-- Add ProductType
-- Add Recipe
 - Create Product
+- Sell Product / Create Transfer
+- Accept Transfer
+- Use Recipe to create a new product
 
 How to run:
 
@@ -28,30 +45,6 @@ How to run:
   - `npx hardhat node --network localhost`
 - How to start the front-end(eth-app-react):
   - `npm start`
-
-Project Structure:
-
-- `Admin`:
-  - [OK] adds users
-  - [TBD] confirms recipes
-- `Base Manufacturer`:
-  - [OK] adds products
-  - [OK] sells products
-- `Manufacturer`:
-  - adds recipes
-    - waits for the recipes to by confirmed by the `Admin`
-  - buys products
-  - transforms the products by using the recipes and creates other products
-  - sells products
-- `Supplier`:
-  - buys products
-  - sells products
-- `Vendor`:
-  - buys products
-  - sell products (in smaller quantity)
-  - extracts product
-- `Client`:
-  - buys products(in smaller quantity)
 
 Objects Structure:
 
@@ -75,26 +68,12 @@ Contracts:
 
 - `Users` + `UsersInterface`
 - `Products` + `ProductsInterface`
-- `ProductTransfers` + `ProductTransfersInterface` // TBD + TBT
-
-TODO:
-
-- [OK] change logic to use interfaces, not inheritance
-- update product transfer logic + test it // use the new ObjectTransfer contract
-- fix tests
-- deploy
-- implement FE
+- `ProductTransfers` + `ProductTransfersInterface`
 
 System Requirements:
 
 - Node Version: `v16.20.2`
 - NPM Version: `8.19.9`
-
-Other requirements:
-
-- Alchemy account
-- Etherscan account
-- Metamask account
 
 To run the project, you need to install these dependencies:
 
@@ -102,6 +81,12 @@ To run the project, you need to install these dependencies:
 npm install --save-dev "hardhat@^2.19.1" "@nomicfoundation/hardhat-toolbox@^4.0.0"
 npm install dotenv --save
 ```
+
+Other requirements:
+
+- Metamask account (required)
+- Alchemy account (optional)
+- Etherscan account (optional)
 
 To run the tests:
 
