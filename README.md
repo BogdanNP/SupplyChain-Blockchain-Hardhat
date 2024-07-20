@@ -110,7 +110,7 @@ The "is" keyword: is used for inheritance in Solidity (https://docs.soliditylang
 
 Memory, Calldata, Storage: https://docs.alchemy.com/docs/when-to-use-storage-vs-memory-vs-calldata-in-solidity#:~:text=Memory%20is%20used%20to%20store,data%20permanently%20on%20the%20blockchain.
 
-msg.sender (sender of the message)  
-The person who's currently connecting with the contract, or the contract which s creating the call to other contract.
+msg.sender (sender of the message):  
+The person who's currently connecting with the contract, or the contract which is creating the call to other contract.
 That's why we need to send myAccount address when we make a call from SupplyChain.sol to Products.sol or any other contract.
 https://stackoverflow.com/questions/48562483/solidity-basics-what-msg-sender-stands-for
