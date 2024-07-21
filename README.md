@@ -22,7 +22,7 @@ User Types:
 - `Supplier`: Buys more products and sells them to other participants.
 - `Vendor`: Sells products in small quantity to the consumer.
 
-## Functionalities:
+## Functionalities
 
 - Add User (Admin)
 - Register / Login User (Anybody with a MetaMask account)
@@ -42,7 +42,7 @@ User Types:
 
 ![System Architecture](/images/system-architecture.png)
 
-## Smart Contracts:
+## Smart Contracts
 
 - `Users` + `UsersInterface`: stores data about users registered in the system
 - `Products` + `ProductsInterface`: stores data about product types, recipes, products, users stock of products, products transfers
@@ -60,7 +60,7 @@ Data about products are saved in a global list which could be accessed by the pr
 To check a product history the list of products and the list of ingredients will be checked recursively until finding base products. The search of a product's ingredients will be a tree of products.
 ![Product Tree](/images/product-tree.png)
 
-## System Requirements:
+## System Requirements
 
 - Node Version: `v16.20.2`
 - NPM Version: `8.19.9`
@@ -78,7 +78,7 @@ Other requirements:
 - Alchemy account (optional)
 - Etherscan account (optional)
 
-## How to run:
+## How to run
 
 - Open terminal, and run a local environment for the blockchain:
   - `npx hardhat node --network localhost`
@@ -109,7 +109,7 @@ npx hardhat node
 npx hardhat run scripts/deploy.js
 ```
 
-## Learnings:
+## Learnings
 
 Revert:  
 If a transaction reverts, from the blockchain's state of view, it's like it never happened. No changes are stored. But the transaction is still visible off-chain, as a reverted transaction - but still no changes are stored, and this includes also event emittance.
