@@ -1,10 +1,9 @@
 # SupplyChain Blockchain Hardhat Project
 
-The reason of creating a supply chain system on blockchain is to offer to the final customer an option to verify the history of a product from its raw materials. The system stores data on blockchain which does not allow others to alter the information.
-
+The reason of creating a supply chain system on blockchain is to offer to the final customer an option to verify the history of a product from its raw materials.
 This project represents a basic system for a supply chain which enstablish the traceability for food products.
 
-This project tracks the creation of a new product. The creation of a product is divided in 2 cases:
+This project tracks the creation of a new product. The manufacturing process of a product is divided in 2 cases:
 
 - Production of a base product, the manufacturer inserts its details: product type, production date and expiration date.
 - The product is a composed product, depends on other products which were created by a manufacturer. In this case the creator of the product must have all the ingredients required in the stock. The transformation of the products to create a new one are stored as a `Recipe`.
