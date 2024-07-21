@@ -24,15 +24,17 @@ User Types:
 Supply chain relationships between actors:
 ![SupplyChain](/images/supply-chain.png)
 
+Users can interact with the smart contracts in blockchain using [React Front End App](https://github.com/BogdanNP/SupplyChain-Blockchain-React)
+
 ## Functionalities
 
 - Add User (Admin)
 - Register / Login User (Anybody with a MetaMask account)
-- Add ProductType / Created at the project init or can be added by an Admin
-- Add Recipe / Created at the project init
+- Add ProductType (Created at the project init or can be added by an Admin)
+- Add Recipe (Created at the project init)
 - Add Product (Manufacturer)
   - Insert base product details
-  - Transform other products to create a new one
+  - Transform other products to create a new one, using a recipe
 - Sell Product (Any user)
   - Create Sell Request
   - Accept / Decline
@@ -48,7 +50,7 @@ Supply chain relationships between actors:
 
 - `Users` + `UsersInterface`: stores data about users registered in the system
 - `Products` + `ProductsInterface`: stores data about product types, recipes, products, users stock of products, products transfers
-- `SupplyChain`: creates a connection between `Users` and `Products`. Takes data about users and uses them in functionalities which implies products or transfers.
+- `SupplyChain`: creates a connection between `Users` and `Products`. Takes data about users and uses it in functionalities which implies products or transfers.
 - `Types`: declares all the data structures used in other smart contracts.
 
 ![Smart Contracts UML Diagram](/images/smart-contracts-uml.png)
