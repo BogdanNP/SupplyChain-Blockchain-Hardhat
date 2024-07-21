@@ -56,7 +56,7 @@ User Types:
 Data about products are saved in a global list which could be accessed by the product barcode. The barcodes of a product's ingredients are saved in other global list (parent list) which could be accesed by the product barcode.
 <picture>
 
-<source media="(prefers-color-scheme: light)" srcset="/images/lists.png">
+<source media="(prefers-color-scheme: light)" srcset="https://github.com/BogdanNP/SupplyChain-Blockchain-Hardhat/blob/master/images/smart-contracts-uml.png">
 ![Product List and Parent/Ingredeints List](/images/lists.png)
 </picture>
 To check a product history the list of products and the list of ingredients will be checked recursively until finding base products. The search of a product's ingredients will be a tree of products.
