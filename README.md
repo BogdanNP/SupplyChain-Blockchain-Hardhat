@@ -22,11 +22,8 @@ User Types:
 - `Supplier`: Buys more products and sells them to other participants.
 - `Vendor`: Sells products in small quantity to the consumer.
 
-Supply chain relationships between actors.
+Supply chain relationships between actors:
 ![SupplyChain](/images/supply-chain.png)
-
-Supply chain using blockchain.
-![SupplyChain with Blockchain](/images/supply-chain-blockchain.png)
 
 ## Functionalities
 
