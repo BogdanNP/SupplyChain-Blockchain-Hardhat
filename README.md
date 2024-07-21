@@ -24,7 +24,7 @@ User Types:
 Supply chain relationships between actors:
 ![SupplyChain](/images/supply-chain.png)
 
-Users can interact with the smart contracts in blockchain using [React Front End App](https://github.com/BogdanNP/SupplyChain-Blockchain-React)
+Users can interact with the smart contracts in blockchain using [Clent Front End App React](https://github.com/BogdanNP/SupplyChain-Blockchain-React).
 
 ## Functionalities
 
