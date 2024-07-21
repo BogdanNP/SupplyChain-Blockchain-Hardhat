@@ -22,6 +22,12 @@ User Types:
 - `Supplier`: Buys more products and sells them to other participants.
 - `Vendor`: Sells products in small quantity to the consumer.
 
+Supply chain relationships between actors.
+![SupplyChain](/images/supply-chain.png)
+
+Supply chain using blockchain.
+![SupplyChain with Blockchain](/images/supply-chain-blockchain.png)
+
 ## Functionalities
 
 - Add User (Admin)
@@ -50,6 +56,10 @@ User Types:
 - `Types`: declares all the data structures used in other smart contracts.
 
 ![Smart Contracts UML Diagram](/images/smart-contracts-uml.png)
+
+## Class diagram of the traceability system
+
+![Class diagram](/images/class-diagram.png)
 
 ## Product Trace
 
