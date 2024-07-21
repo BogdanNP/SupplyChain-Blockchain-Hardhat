@@ -38,21 +38,25 @@ User Types:
 - Trace Product (Anybody with a MetaMask account)
 - Block Product (Admin)
 
-## How to run:
+## System Architecture
 
-- Open terminal, and run a local environment for the blockchain:
-  - `npx hardhat node --network localhost`
-- Open new terminal and deploy blockchain smart-contracts:
-  - `npx hardhat run scripts/deploy_supply_chain.js`
-- Start the front-end:
-  - `npm start`
+![System Architecture](/images/system-architecture.png)
 
 ## Smart Contracts:
 
 - `Users` + `UsersInterface`: stores data about users registered in the system
 - `Products` + `ProductsInterface`: stores data about product types, recipes, products, users stock of products, products transfers
-- `SupplyChain`: creates a connection between `Users` and `Products`. Takes data about users and uses them in functionalities which implies the products.
+- `SupplyChain`: creates a connection between `Users` and `Products`. Takes data about users and uses them in functionalities which implies products or transfers.
 - `Types`: declares all the data structures used in other smart contracts.
+
+![Smart Contracts UML Diagram](/images/smart-contracts-uml.png)
+
+## Product Trace
+
+Data about products are saved in a global list which could be accessed by the product barcode. The barcodes of a product's ingredients are saved in other global list (parent list) which could be accesed by the product barcode.
+![Product List and Parent/Ingredeints List](/images/lists.png)
+To check a product history the list of products and the list of ingredients will be checked recursively until finding base products. The search of a product's ingredients will be a tree of products.
+![Product Tree](/images/product-tree.png)
 
 ## System Requirements:
 
@@ -71,6 +75,15 @@ Other requirements:
 - Metamask account (required)
 - Alchemy account (optional)
 - Etherscan account (optional)
+
+## How to run:
+
+- Open terminal, and run a local environment for the blockchain:
+  - `npx hardhat node --network localhost`
+- Open new terminal and deploy blockchain smart-contracts:
+  - `npx hardhat run scripts/deploy_supply_chain.js`
+- Start the front-end:
+  - `npm start`
 
 Run the tests:
 
